@@ -272,7 +272,7 @@ async function searchAladin(query){
       author:(item.author||'').replace(/\s*\(.*?\)/g,'').trim(),
       cover:item.cover||null,
       publisher:item.publisher||'',
-      pages:item.subInfo?.itemPage||item.subInfo?.pages||0,
+      pages:item.subInfo?.itemPage||item.subInfo?.pages||item.pagesCount||0,
       isbn:item.isbn13||item.isbn||'',
       category:mapCategory(item.categoryName||''),
       description:item.description||'',
@@ -555,7 +555,7 @@ function AddBookModal({onClose,onAdd}){
               h('input',{className:'field-input',type:'date',value:form.started,onChange:e=>upd('started',e.target.value)})
             ),
             h('div',{style:{marginTop:8,display:'flex',gap:8}},
-              h('button',{className:'btn-ghost',onClick:onClose},'취소'),
+              h('button',{className:'btn-ghost',onClick:onClose,style:{width:'auto',padding:'0 20px',flexShrink:0}},'취소'),
               h('button',{className:'btn-primary',onClick:handleAdd,disabled:!form.title.trim()||!form.author.trim(),style:{flex:1}},'서재에 추가')
             )
           )
