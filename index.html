@@ -265,7 +265,6 @@ async function searchAladin(query){
   try{
     const res=await fetch(ALADIN_PROXY+encodeURIComponent(query));
     const text=await res.text();
-    // 알라딘 API는 JSON이지만 앞뒤 공백/BOM 제거 필요
     const data=JSON.parse(text.trim().replace(/^\uFEFF/,''));
     if(!data.item||data.item.length===0)return getMockResults(query);
     return data.item.map(item=>({
@@ -273,7 +272,7 @@ async function searchAladin(query){
       author:(item.author||'').replace(/\s*\(.*?\)/g,'').trim(),
       cover:item.cover||null,
       publisher:item.publisher||'',
-      pages:0,
+      pages:item.subInfo?.itemPage||item.subInfo?.pages||0,
       isbn:item.isbn13||item.isbn||'',
       category:mapCategory(item.categoryName||''),
       description:item.description||'',
@@ -652,13 +651,14 @@ function EditBookModal({book,onClose,onUpdate,onDelete}){
           ?h('div',null,
               h('p',{style:{fontSize:13,color:'var(--danger)',fontWeight:600,marginBottom:10,textAlign:'center'}},'정말 삭제하시겠어요? 되돌릴 수 없습니다.'),
               h('div',{style:{display:'flex',gap:8}},
-                h('button',{className:'btn-ghost',onClick:()=>setConfirmDel(false)},'취소'),
+                h('button',{className:'btn-ghost',style:{flex:1},onClick:()=>setConfirmDel(false)},'취소'),
                 h('button',{className:'btn-danger',style:{flex:1},onClick:()=>{onDelete(book.id);onClose();}},'삭제')
               )
             )
           :h('div',{style:{display:'flex',gap:8}},
-              h('button',{className:'btn-danger',style:{width:44,padding:0,flexShrink:0},onClick:()=>setConfirmDel(true),title:'삭제'},h(Icon,{name:'trash',size:16})),
-              h('button',{className:'btn-primary',style:{flex:1},onClick:handleSave},'저장')
+              h('button',{className:'btn-ghost',style:{flex:1},onClick:onClose},'취소'),
+              h('button',{className:'btn-danger',style:{flex:1},onClick:()=>setConfirmDel(true)},'삭제'),
+              h('button',{className:'btn-primary',style:{flex:2},onClick:handleSave},'저장')
             )
       )
     )
