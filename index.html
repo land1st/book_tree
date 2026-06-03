@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>booktree</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p-hue:255;--p-chroma:0.14;
+  --bg:oklch(0.968 0.005 255);
+  --surface:oklch(0.997 0.002 255);
+  --surface-2:oklch(0.975 0.005 255);
+  --text:oklch(0.29 0.025 262);
+  --muted:oklch(0.54 0.02 262);
+  --faint:oklch(0.7 0.015 262);
+  --border:oklch(0.915 0.008 258);
+  --track:oklch(0.92 0.01 258);
+  --ok:oklch(0.6 0.11 162);
+  --warn:oklch(0.68 0.14 58);
+  --star:oklch(0.79 0.13 76);
+  --star-empty:oklch(0.88 0.01 258);
+  --primary:oklch(0.55 var(--p-chroma) var(--p-hue));
+  --primary-tint:oklch(0.93 0.03 var(--p-hue));
+  --radius:18px;
+  --shadow:0 1px 2px rgba(20,28,48,.05),0 8px 24px -12px rgba(20,28,48,.14);
+  --shadow-lg:0 24px 60px -20px rgba(15,23,42,.35);
+  --sidebar-w:248px;
+}
+[data-theme="dark"]{
+  --bg:oklch(0.168 0.012 264);
+  --surface:oklch(0.214 0.015 264);
+  --surface-2:oklch(0.252 0.017 264);
+  --text:oklch(0.95 0.006 258);
+  --muted:oklch(0.68 0.016 260);
+  --faint:oklch(0.55 0.018 260);
+  --border:oklch(0.3 0.016 264);
+  --track:oklch(0.32 0.02 264);
+  --primary:oklch(0.68 var(--p-chroma) var(--p-hue));
+  --primary-tint:oklch(0.26 0.04 var(--p-hue));
+}
+html,body{height:100%;width:100%;overflow:hidden}
+body{font-family:'Pretendard Variable',-apple-system,system-ui,sans-serif;letter-spacing:-0.01em;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+#root{display:flex;height:100vh;width:100%;overflow:hidden}
+button{font-family:inherit;letter-spacing:-0.01em;cursor:pointer}
+textarea{font-family:inherit;outline:none;}
+textarea:focus{border-color:var(--primary)!important}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
+@keyframes riseUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── 데스크탑 레이아웃 (>= 920px) ── */
+.app-shell{display:flex;height:100vh;width:100%;overflow:hidden}
+
+/* 사이드바 */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:20px 16px;gap:4px;
+  z-index:10;
+}
+.sidebar-logo{display:flex;align-items:center;gap:8px;padding:10px 10px 22px}
+.sidebar-logo-text{font-size:17px;font-weight:800;letter-spacing:-0.03em}
+.sidebar-logo-muted{color:var(--muted)}
+.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}
+.sidebar-nav-btn{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;
+  border-radius:10px;border:none;background:transparent;
+  color:var(--text);font-weight:500;font-size:14px;text-align:left;
+  transition:background 0.15s,color 0.15s;width:100%;
+}
+.sidebar-nav-btn.active{background:var(--primary-tint);color:var(--primary);font-weight:700}
+.sidebar-nav-btn:hover:not(.active){background:var(--surface-2)}
+.sidebar-footer{border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:8px}
+.add-btn{
+  background:var(--primary);color:#fff;border:none;border-radius:12px;
+  height:44px;font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+}
+.add-btn:hover{opacity:0.9}
+.theme-btn{
+  background:none;border:none;color:var(--muted);
+  display:flex;align-items:center;gap:8px;padding:4px 10px;font-size:13px;font-weight:500;
+}
+.theme-btn:hover{color:var(--text)}
+
+/* 메인 콘텐츠 */
+.main-content{flex:1;overflow-y:auto;background:var(--bg)}
+.page-inner{max-width:1080px;margin:0 auto;padding:28px 36px;display:flex;flex-direction:column;gap:20px;width:100%}
+
+/* 모바일 탑바/탭바 — 기본 숨김 */
+.topbar{display:none}
+.tabbar{display:none}
+
+/* ── 모바일 레이아웃 (< 920px) ── */
+@media(max-width:919px){
+  .sidebar{display:none}
+  .app-shell{flex-direction:column}
+  .main-content{flex:1;overflow-y:auto;padding-bottom:0}
+  .page-inner{padding:16px 16px 24px}
+
+  /* 탑바 */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    height:56px;padding:0 16px;
+    background:var(--surface);border-bottom:1px solid var(--border);
+    flex-shrink:0;z-index:10;
+  }
+  .topbar-logo{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800;letter-spacing:-0.03em}
+  .topbar-actions{display:flex;align-items:center;gap:4px}
+  .topbar-icon-btn{background:none;border:none;color:var(--muted);padding:8px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+  .topbar-icon-btn:hover{background:var(--surface-2);color:var(--text)}
+
+  /* 탭바 */
+  .tabbar{
+    display:flex;height:60px;
+    background:var(--surface);border-top:1px solid var(--border);
+    flex-shrink:0;z-index:10;
+  }
+  .tabbar-btn{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    border:none;background:transparent;color:var(--muted);font-size:10px;font-weight:600;
+    transition:color 0.15s;
+  }
+  .tabbar-btn.active{color:var(--primary)}
+  .tabbar-btn:hover:not(.active){color:var(--text)}
+}
+
+/* ── 히어로 배너 ── */
+.hero-banner{
+  border-radius:18px;padding:28px 32px;
+  display:flex;gap:24px;align-items:center;
+  position:relative;overflow:hidden;min-height:200px;
+}
+.hero-cover-wrap{cursor:pointer;flex-shrink:0}
+.hero-cover-wrap .cover-art{transition:transform 0.25s ease}
+.hero-cover-wrap:hover .cover-art{transform:translateY(-4px) rotate(-1deg)}
+.hero-body{flex:1;color:#fff;min-width:0}
+.hero-title{font-size:clamp(22px,3.5vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1.15;margin-bottom:6px}
+.hero-meta{font-size:13px;opacity:0.8;margin-bottom:18px}
+.hero-progress-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px;font-weight:600}
+.hero-bar-track{height:6px;background:rgba(255,255,255,0.22);border-radius:3px}
+.hero-bar-fill{height:100%;background:#fff;border-radius:3px;transition:width 0.7s cubic-bezier(.2,.8,.2,1)}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hero-btn-primary{background:#fff;color:#333;border:none;border-radius:12px;height:42px;padding:0 20px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer}
+.hero-btn-ghost{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);border-radius:12px;height:42px;padding:0 18px;font-size:14px;font-weight:700;cursor:pointer}
+/* 모바일 히어로 */
+@media(max-width:559px){
+  .hero-banner{padding:20px 18px;gap:16px;border-radius:14px;min-height:160px}
+  .hero-title{font-size:22px}
+  .hero-meta{margin-bottom:12px}
+}
+
+/* ── 통계 스트립 ── */
+.stat-strip{background:var(--surface);border-radius:16px;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:var(--shadow);overflow:hidden}
+.stat-cell{padding:16px 20px}
+.stat-cell+.stat-cell{border-left:1px solid var(--border)}
+.stat-label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:5px}
+.stat-value{display:flex;align-items:center;gap:4px}
+.stat-num{font-size:22px;font-weight:800}
+.stat-unit{font-size:13px;color:var(--muted);font-weight:600}
+@media(max-width:559px){
+  .stat-strip{grid-template-columns:repeat(2,1fr)}
+  .stat-cell:nth-child(3){border-left:none;border-top:1px solid var(--border)}
+  .stat-cell:nth-child(4){border-top:1px solid var(--border)}
+  .stat-num{font-size:18px}
+}
+
+/* ── 책 그리드 ── */
+.book-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+@media(max-width:919px){.book-grid{grid-template-columns:repeat(4,1fr);gap:14px}}
+@media(max-width:559px){.book-grid{grid-template-columns:repeat(3,1fr);gap:10px}}
+
+/* ── 커버 아트 ── */
+.cover-art{border-radius:8px;position:relative;overflow:hidden;flex-shrink:0}
+.cover-art-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;gap:3px}
+
+/* ── 책 카드 ── */
+.book-card{cursor:pointer;display:flex;flex-direction:column;gap:0}
+.book-card-cover-wrap{position:relative;margin-bottom:8px}
+.book-card-cover-wrap .cover-art{transition:transform 0.2s ease;width:100%;aspect-ratio:5/7}
+.book-card:hover .book-card-cover-wrap .cover-art{transform:translateY(-5px)}
+.reading-badge{position:absolute;top:6px;left:6px;background:var(--primary);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px}
+.book-card-title{font-size:12.5px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.book-card-sub{font-size:11px;color:var(--muted)}
+.book-card-reading{font-size:11px;color:var(--primary);font-weight:700}
+
+/* ── 책 행(리스트뷰) ── */
+.book-row{background:var(--surface);border-radius:12px;padding:12px 16px;display:flex;gap:14px;align-items:center;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;transition:border-color 0.15s,box-shadow 0.15s}
+.book-row:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+.book-row-info{flex:1;min-width:0}
+.book-row-title{font-weight:700;font-size:14px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.book-row-meta{font-size:12px;color:var(--muted);margin-bottom:5px}
+.progress-mini{display:flex;align-items:center;gap:8px}
+.progress-mini-bar{flex:1;height:4px;background:var(--track);border-radius:2px}
+.progress-mini-fill{height:100%;background:var(--primary);border-radius:2px}
+.progress-mini-pct{font-size:11px;color:var(--primary);font-weight:700;flex-shrink:0}
+
+/* ── 통계 화면 ── */
+.stats-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:919px){.stats-cards{grid-template-columns:repeat(2,1fr)}}
+.stats-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:759px){.stats-2col{grid-template-columns:1fr}}
+.stat-card{background:var(--surface);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.stat-card-icon{width:36px;height:36px;border-radius:10px;background:var(--primary-tint);display:flex;align-items:center;justify-content:center;color:var(--primary);margin-bottom:12px}
+.stat-card-val{font-size:28px;font-weight:800;line-height:1}
+.stat-card-unit{font-size:14px;color:var(--muted);font-weight:600;margin-left:3px}
+.stat-card-label{font-size:12px;color:var(--muted);font-weight:600;margin-top:5px}
+
+/* ── 목표 화면 ── */
+.goal-hero{background:var(--surface);border-radius:18px;padding:32px;box-shadow:var(--shadow)}
+.goal-inner{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+@media(max-width:559px){.goal-inner{gap:20px}.goal-hero{padding:20px}}
+
+/* ── 캘린더 ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-cell{aspect-ratio:1;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid transparent;padding:2px}
+.cal-cell.today{border-color:var(--primary)}
+.cal-day{font-size:11px;font-weight:700;line-height:1.2}
+.cal-min{font-size:8px;font-weight:600;line-height:1.1}
+@media(max-width:559px){.cal-grid{gap:2px}.cal-cell{border-radius:6px}.cal-day{font-size:10px}.cal-min{font-size:7px}}
+
+/* ── 모달 ── */
+.modal-scrim{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease}
+.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:riseUp 0.32s ease;position:relative}
+.modal-hero{padding:28px 24px 24px;display:flex;gap:16px;align-items:flex-start;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.25);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer}
+.modal-body{padding:24px;display:flex;flex-direction:column;gap:18px}
+.modal-save-btn{background:var(--primary);color:#fff;border:none;border-radius:14px;height:46px;font-size:15px;font-weight:700;width:100%}
+
+/* 필터 칩 */
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:10px;padding:7px 14px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;gap:5px;cursor:pointer;transition:background 0.15s,color 0.15s,border-color 0.15s}
+.chip.active{background:var(--primary);color:#fff;border-color:transparent}
+.chip-count{border-radius:10px;padding:1px 7px;font-size:11px;background:var(--surface-2)}
+.chip.active .chip-count{background:rgba(255,255,255,0.25)}
+
+/* 뷰 토글 */
+.view-toggle{display:flex;gap:4px}
+.view-btn{border:none;border-radius:8px;padding:7px;display:flex;align-items:center;background:transparent;color:var(--muted)}
+.view-btn.active{background:var(--primary-tint);color:var(--primary)}
+
+/* 섹션 헤더 */
+.shelf-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.shelf-title{font-size:18px;font-weight:800}
+.shelf-count{font-size:13px;color:var(--muted)}
+
+/* 페이지 헤더 */
+.page-head{margin-bottom:4px}
+.page-head h1{font-size:28px;font-weight:800}
+.page-head p{color:var(--muted);font-size:13px;margin-top:4px}
+@media(max-width:559px){.page-head h1{font-size:22px}}
+
+/* 스트릭 배너 */
+.streak-banner{background:oklch(0.95 0.04 58);border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+
+/* 펄스 dot */
+.pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;margin-right:6px;flex-shrink:0}
+/* status pill */
+.status-pill{border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;display:inline-block}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script>
+const {useState,useEffect,useRef}=React;
+const h=React.createElement;
+
+/* ── 데이터 ── */
+const BOOKS=[
+  {id:1,title:'죄와 벌 1',author:'도스토옙스키',pages:512,page:168,status:'reading',rating:0,review:'',category:'고전',started:'2026-05-01',finished:null,seed:0},
+  {id:2,title:'죄와 벌 2',author:'도스토옙스키',pages:489,page:0,status:'wish',rating:0,review:'',category:'고전',started:null,finished:null,seed:1},
+  {id:3,title:'아버지의 해방일지',author:'정지아',pages:284,page:284,status:'done',rating:4,review:'묵직한 여운이 남는 소설',category:'소설',started:'2026-01-05',finished:'2026-01-18',seed:2},
+  {id:4,title:'각각의 계절',author:'권여선',pages:312,page:312,status:'done',rating:3.5,review:'',category:'소설',started:'2026-02-01',finished:'2026-02-14',seed:3},
+  {id:5,title:'안녕 주정뱅이',author:'권여선',pages:268,page:268,status:'done',rating:4,review:'',category:'소설',started:'2026-02-15',finished:'2026-02-28',seed:4},
+  {id:6,title:'바이너리 코드 2',author:'이재인',pages:352,page:352,status:'done',rating:4,review:'',category:'SF',started:'2026-03-01',finished:'2026-03-15',seed:5},
+  {id:7,title:'바이너리 코드 1',author:'이재인',pages:340,page:340,status:'done',rating:4,review:'',category:'SF',started:'2026-03-16',finished:'2026-03-30',seed:6},
+  {id:8,title:'은마',author:'안정효',pages:296,page:296,status:'done',rating:3.5,review:'',category:'소설',started:'2026-04-01',finished:'2026-04-10',seed:7},
+  {id:9,title:'물고기는 존재하지 않는다',author:'룰루 밀러',pages:300,page:300,status:'done',rating:5,review:'인생 책',category:'에세이',started:'2026-04-11',finished:'2026-04-25',seed:8},
+  {id:10,title:'시간을 파는 상점',author:'김선영',pages:320,page:320,status:'done',rating:4,review:'',category:'소설',started:'2026-04-26',finished:'2026-05-10',seed:9},
+  {id:11,title:'채식주의자',author:'한강',pages:247,page:120,status:'reading',rating:0,review:'',category:'소설',started:'2026-05-11',finished:null,seed:10},
+  {id:12,title:'킬러의 보디가드',author:'장강명',pages:380,page:0,status:'dropped',rating:2,review:'중간에 포기',category:'소설',started:'2026-01-20',finished:null,seed:11},
+];
+const READING_LOG={'2026-05-04':40,'2026-05-06':55,'2026-05-07':35,'2026-05-10':80,'2026-05-11':45,'2026-05-14':40,'2026-05-15':50,'2026-05-17':25,'2026-05-18':60,'2026-05-19':35,'2026-05-22':40,'2026-05-23':55,'2026-05-24':50,'2026-05-25':30,'2026-05-26':45,'2026-05-27':60,'2026-05-28':40,'2026-05-29':35,'2026-05-30':55};
+const GOAL={year:2026,target:30,done:7};
+const STATS={finishedCount:7,pagesThisYear:2174,readingDays:64,streak:9,bestStreak:23,avgRating:3.8,minutesThisYear:3120,byCategory:[{name:'소설',count:4},{name:'SF',count:2},{name:'에세이',count:1},{name:'인문',count:0}],byMonth:[{m:'1월',n:1},{m:'2월',n:2},{m:'3월',n:2},{m:'4월',n:2},{m:'5월',n:0},{m:'6월',n:0}]};
+const COVER_COLORS=[['#4a7c8a','#2d5a6a'],['#7a5c8a','#5a3c6a'],['#5a8a6a','#3a6a4a'],['#8a6a4a','#6a4a2a'],['#5a6a8a','#3a4a6a'],['#8a5a6a','#6a3a4a'],['#6a8a5a','#4a6a3a'],['#7a6a5a','#5a4a3a'],['#5a7a8a','#3a5a6a'],['#8a7a5a','#6a5a3a'],['#6a5a7a','#4a3a5a'],['#7a8a6a','#5a6a4a']];
+
+/* ── 공용 컴포넌트 ── */
+const ICONS={
+  books:'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z',
+  chart:'M18 20V10 M12 20V4 M6 20v-6',
+  target:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+  calendar:'M3 4h18v18H3z M3 9h18 M8 2v4 M16 2v4',
+  plus:'M12 5v14 M5 12h14',
+  sun:'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z M12 1v2 M12 21v2 M4.22 4.22l1.42 1.42 M18.36 18.36l1.42 1.42 M1 12h2 M21 12h2 M4.22 19.78l1.42-1.42 M18.36 5.64l1.42-1.42',
+  moon:'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z',
+  clock:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6v6l4 2',
+  flame:'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z',
+  bookmark:'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z',
+  grid:'M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z',
+  list:'M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01',
+  x:'M18 6 6 18 M6 6l12 12',
+  chevL:'M15 18l-6-6 6-6',
+  chevR:'M9 18l6-6-6-6',
+  heart:'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z',
+  arrowUp:'M12 19V5 M5 12l7-7 7 7',
+  search:'M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0',
+  bell:'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0',
+  menu:'M3 12h18 M3 6h18 M3 18h18',
+  book:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20',
+};
+
+function Icon({name,size=18,style={},className=''}){
+  return h('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.7,strokeLinecap:'round',strokeLinejoin:'round',style:{flexShrink:0,...style},className},
+    h('path',{d:ICONS[name]||ICONS.book})
+  );
+}
+
+function CoverArt({book,width,height,className='',style={}}){
+  const[c1,c2]=COVER_COLORS[book.seed%12];
+  const fontSize=width<80?10:width<130?12:14;
+  const authorSize=width<80?8:10;
+  return h('div',{className:'cover-art '+className,style:{width,height,background:`linear-gradient(150deg,${c1},${c2})`,...style}},
+    h('div',{className:'cover-art-inner'},
+      h('p',{style:{color:'#fff',fontWeight:700,fontSize,textAlign:'center',lineHeight:1.3,letterSpacing:'-0.02em',display:'-webkit-box',WebkitLineClamp:3,WebkitBoxOrient:'vertical',overflow:'hidden'}},book.title),
+      h('p',{style:{color:'rgba(255,255,255,0.65)',fontSize:authorSize,textAlign:'center',marginTop:2}},book.author)
+    )
+  );
+}
+
+function Stars({rating,onChange,size=14}){
+  const[hov,setHov]=useState(null);
+  return h('div',{style:{display:'flex',gap:2,cursor:onChange?'pointer':'default'}},
+    [1,2,3,4,5].map(i=>{
+      const val=hov??rating;
+      const full=val>=i, half=!full&&val>=i-0.5;
+      return h('span',{key:i,
+        style:{fontSize:size,color:(full||half)?'var(--star)':'var(--star-empty)',userSelect:'none'},
+        onMouseMove:onChange?e=>{const r=e.currentTarget.getBoundingClientRect();setHov(e.clientX-r.left<r.width/2?i-0.5:i);}:undefined,
+        onMouseLeave:onChange?()=>setHov(null):undefined,
+        onClick:onChange?(()=>{if(hov!=null)onChange(hov);}):undefined
+      },full?'★':half?'⯨':'☆');
+    })
+  );
+}
+
+function Ring({value,max,size=150,stroke=10,warn=false}){
+  const r=size/2-stroke, c=2*Math.PI*r, pct=Math.min(value/max,1);
+  return h('svg',{width:size,height:size,viewBox:`0 0 ${size} ${size}`},
+    h('circle',{cx:size/2,cy:size/2,r,fill:'none',stroke:'var(--track)',strokeWidth:stroke}),
+    h('circle',{cx:size/2,cy:size/2,r,fill:'none',stroke:warn?'var(--warn)':'var(--primary)',strokeWidth:stroke,
+      strokeDasharray:c,strokeDashoffset:c*(1-pct),strokeLinecap:'round',
+      transform:`rotate(-90 ${size/2} ${size/2})`,
+      style:{transition:'stroke-dashoffset 0.7s cubic-bezier(.2,.8,.2,1)'}
+    })
+  );
+}
+
+function StatusPill({status}){
+  const map={wish:{label:'위시',bg:'var(--surface-2)',color:'var(--muted)'},reading:{label:'독서중',bg:'rgba(59,91,219,0.12)',color:'var(--primary)'},done:{label:'완독',bg:'rgba(47,158,99,0.12)',color:'var(--ok)'},dropped:{label:'하차',bg:'rgba(180,60,60,0.12)',color:'oklch(0.5 0.1 0)'}};
+  const m=map[status]||map.wish;
+  return h('span',{className:'status-pill',style:{background:m.bg,color:m.color}},m.label);
+}
+
+/* ── 책 상세 모달 ── */
+function BookModal({book,onClose,onUpdate}){
+  const[rating,setRating]=useState(book.rating);
+  const[review,setReview]=useState(book.review||'');
+  const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
+  const[c1,c2]=COVER_COLORS[book.seed%12];
+  useEffect(()=>{
+    document.body.style.overflow='hidden';
+    return()=>{document.body.style.overflow='';};
+  },[]);
+  return h('div',{className:'modal-scrim',onClick:e=>{if(e.target===e.currentTarget)onClose();}},
+    h('div',{className:'modal-sheet'},
+      h('div',{className:'modal-hero',style:{background:`linear-gradient(150deg,${c1},${c2})`}},
+        h(CoverArt,{book,width:90,height:126}),
+        h('div',{style:{flex:1,color:'#fff',paddingTop:4,minWidth:0}},
+          h(StatusPill,{status:book.status}),
+          h('h2',{style:{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginTop:8,lineHeight:1.2}},book.title),
+          h('p',{style:{opacity:0.8,fontSize:13,marginTop:4}},[book.author,' · ',book.pages,'p · ',book.category])
+        ),
+        h('button',{className:'modal-close',onClick:onClose},h(Icon,{name:'x',size:16}))
+      ),
+      h('div',{className:'modal-body'},
+        book.status==='reading'&&h('div',null,
+          h('div',{style:{display:'flex',justifyContent:'space-between',fontSize:13,color:'var(--muted)',marginBottom:7}},
+            h('span',null,[book.page,' / ',book.pages,'p']),h('span',null,[pct,'%'])
+          ),
+          h('div',{style:{height:7,background:'var(--track)',borderRadius:4}},
+            h('div',{style:{height:'100%',width:pct+'%',background:'var(--primary)',borderRadius:4}})
+          )
+        ),
+        (book.status==='done'||book.status==='dropped')&&h('div',null,
+          h('p',{style:{fontSize:12,color:'var(--muted)',fontWeight:600,marginBottom:8}},'별점'),
+          h(Stars,{rating,onChange:setRating,size:30})
+        ),
+        h('div',null,
+          h('p',{style:{fontSize:12,color:'var(--muted)',fontWeight:600,marginBottom:8}},'한 줄 리뷰'),
+          h('textarea',{value:review,onChange:e=>setReview(e.target.value),placeholder:'감상을 남겨보세요...',
+            style:{width:'100%',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:12,padding:'10px 14px',resize:'none',height:80,fontSize:14,color:'var(--text)'}})
+        ),
+        h('div',{style:{display:'flex',gap:20,fontSize:13,color:'var(--muted)'}},
+          book.started&&h('span',null,['📅 시작: ',book.started]),
+          book.finished&&h('span',null,['✅ 완독: ',book.finished])
+        ),
+        h('button',{className:'modal-save-btn',onClick:()=>{onUpdate({...book,rating,review});onClose();}},'저장')
+      )
+    )
+  );
+}
+
+/* ── 히어로 배너 ── */
+function HeroBanner({books,readIdx,setReadIdx,onOpen}){
+  const reading=books.filter(b=>b.status==='reading');
+  if(!reading.length)return h('div',{style:{background:'var(--surface)',borderRadius:18,padding:48,textAlign:'center',color:'var(--muted)',fontSize:15}},'📚 읽는 중인 책이 없습니다');
+  const book=reading[readIdx%reading.length];
+  const pct=Math.round(book.page/book.pages*100);
+  const[c1,c2]=COVER_COLORS[book.seed%12];
+  return h('div',{className:'hero-banner',style:{background:`linear-gradient(150deg,${c1}dd,${c2})`}},
+    h('div',{style:{position:'absolute',top:-50,right:-50,width:220,height:220,borderRadius:'50%',background:'rgba(255,255,255,0.06)',pointerEvents:'none'}}),
+    h('div',{className:'hero-cover-wrap',onClick:()=>onOpen(book)},
+      h(CoverArt,{book,width:130,height:182,className:'cover-art',style:{boxShadow:'0 16px 48px rgba(0,0,0,0.35)'}})
+    ),
+    h('div',{className:'hero-body'},
+      h('div',{style:{display:'flex',alignItems:'center',flexWrap:'wrap',gap:6,marginBottom:10}},
+        h('span',{className:'pulse-dot'}),
+        h('span',{style:{fontSize:12,fontWeight:600,opacity:0.9,color:'#fff'}},'지금 읽는 중'),
+        reading.length>1&&h('div',{style:{display:'flex',gap:4,marginLeft:4}},
+          reading.map((_,i)=>h('span',{key:i,onClick:()=>setReadIdx(i),
+            style:{width:6,height:6,borderRadius:'50%',background:i===(readIdx%reading.length)?'#fff':'rgba(255,255,255,0.35)',cursor:'pointer',display:'inline-block'}
+          }))
+        )
+      ),
+      h('h1',{className:'hero-title',style:{color:'#fff'}},book.title),
+      h('p',{className:'hero-meta',style:{color:'rgba(255,255,255,0.85)'}},book.author+' · '+book.pages+'p · '+book.category),
+      h('div',null,
+        h('div',{className:'hero-progress-row'},h('span',null,book.page+' / '+book.pages+'p'),h('span',null,pct+'%')),
+        h('div',{className:'hero-bar-track'},h('div',{className:'hero-bar-fill',style:{width:pct+'%'}}))
+      ),
+      h('div',{className:'hero-actions'},
+        h('button',{className:'hero-btn-primary',onClick:()=>onOpen(book)},h(Icon,{name:'clock',size:15}),'타이머 시작'),
+        h('button',{className:'hero-btn-ghost',onClick:()=>onOpen(book)},'상세')
+      )
+    )
+  );
+}
+
+/* ── 통계 스트립 ── */
+function StatStrip(){
+  const{finishedCount,pagesThisYear,readingDays,streak}=STATS;
+  const items=[{label:'완독',val:finishedCount,unit:'권',icon:null},{label:'올해 페이지',val:pagesThisYear.toLocaleString(),unit:'p',icon:null},{label:'독서일',val:readingDays,unit:'일',icon:null},{label:'연속',val:streak,unit:'일',icon:'flame'}];
+  return h('div',{className:'stat-strip'},
+    items.map((item,i)=>h('div',{key:i,className:'stat-cell'},
+      h('p',{className:'stat-label'},item.label),
+      h('div',{className:'stat-value'},
+        h('span',{className:'stat-num'},String(item.val)),
+        h('span',{className:'stat-unit'},item.unit),
+        item.icon&&h(Icon,{name:item.icon,size:14,style:{color:'var(--warn)',marginLeft:2}})
+      )
+    ))
+  );
+}
+
+/* ── 서재 화면 ── */
+function LibraryScreen({books,onOpen}){
+  const[filter,setFilter]=useState('done');
+  const[view,setView]=useState('grid');
+  const[readIdx,setReadIdx]=useState(0);
+  const filters=[{k:'wish',label:'위시'},{k:'reading',label:'독서중'},{k:'done',label:'완독'},{k:'dropped',label:'하차'}];
+  const filtered=books.filter(b=>b.status===filter);
+  const counts=Object.fromEntries(filters.map(f=>[f.k,books.filter(b=>b.status===f.k).length]));
+  const labelMap={wish:'위시',reading:'독서중',done:'완독',dropped:'하차'};
+  return h('div',{className:'page-inner'},
+    h(HeroBanner,{books,readIdx,setReadIdx,onOpen}),
+    h(StatStrip),
+    h('div',null,
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,gap:10,flexWrap:'wrap'}},
+        h('div',{className:'filter-chips'},
+          filters.map(f=>h('button',{key:f.k,className:'chip'+(filter===f.k?' active':''),onClick:()=>setFilter(f.k)},
+            f.label,h('span',{className:'chip-count'},counts[f.k])
+          ))
+        ),
+        h('div',{className:'view-toggle'},
+          ['grid','list'].map(v=>h('button',{key:v,className:'view-btn'+(view===v?' active':''),onClick:()=>setView(v)},h(Icon,{name:v,size:16})))
+        )
+      ),
+      h('div',{className:'shelf-header'},
+        h('h2',{className:'shelf-title'},labelMap[filter]),
+        h('span',{className:'shelf-count'},filtered.length+'권')
+      ),
+      view==='grid'
+        ?h('div',{className:'book-grid'},filtered.map(b=>h(BookCard,{key:b.id,book:b,onOpen})))
+        :h('div',null,filtered.map(b=>h(BookRow,{key:b.id,book:b,onOpen})))
+    )
+  );
+}
+
+function BookCard({book,onOpen}){
+  const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
+  return h('div',{className:'book-card',onClick:()=>onOpen(book)},
+    h('div',{className:'book-card-cover-wrap'},
+      h(CoverArt,{book,width:'100%',height:undefined,className:'cover-art',style:{aspectRatio:'5/7',width:'100%',height:'auto'}}),
+      book.status==='reading'&&h('span',{className:'reading-badge'},'독서중')
+    ),
+    h('p',{className:'book-card-title'},book.title),
+    book.status==='done'?h(Stars,{rating:book.rating,size:11}):
+    book.status==='reading'?h('p',{className:'book-card-reading'},pct+'% 읽음'):
+    h('p',{className:'book-card-sub'},book.author)
+  );
+}
+
+function BookRow({book,onOpen}){
+  const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
+  return h('div',{className:'book-row',onClick:()=>onOpen(book)},
+    h(CoverArt,{book,width:46,height:64,style:{borderRadius:6}}),
+    h('div',{className:'book-row-info'},
+      h('p',{className:'book-row-title'},book.title),
+      h('p',{className:'book-row-meta'},book.author+' · '+book.category),
+      book.status==='done'?h(Stars,{rating:book.rating,size:12}):
+      book.status==='reading'?h('div',{className:'progress-mini'},
+        h('div',{className:'progress-mini-bar'},h('div',{className:'progress-mini-fill',style:{width:pct+'%'}})),
+        h('span',{className:'progress-mini-pct'},pct+'%')
+      ):null
+    ),
+    h(Icon,{name:'chevR',size:16,style:{color:'var(--faint)',flexShrink:0}})
+  );
+}
+
+/* ── 통계 화면 ── */
+function StatsScreen(){
+  const{byMonth,byCategory,streak,bestStreak,readingDays,finishedCount,pagesThisYear,avgRating,minutesThisYear}=STATS;
+  const maxM=Math.max(...byMonth.map(m=>m.n),1);
+  return h('div',{className:'page-inner'},
+    h('div',{className:'page-head'},h('h1',null,'통계'),h('p',null,'2026년 나의 독서 데이터')),
+    h('div',{className:'stats-cards'},
+      [{icon:'book',val:finishedCount,unit:'권',label:'올해 완독'},{icon:'books',val:pagesThisYear.toLocaleString(),unit:'p',label:'읽은 페이지'},{icon:'clock',val:Math.round(minutesThisYear/60),unit:'시간',label:'독서 시간'},{icon:'heart',val:avgRating,unit:'',label:'평균 별점'}]
+      .map((item,i)=>h('div',{key:i,className:'stat-card'},
+        h('div',{className:'stat-card-icon'},h(Icon,{name:item.icon,size:18})),
+        h('div',{className:'stat-card-val'},String(item.val),h('span',{className:'stat-card-unit'},item.unit)),
+        h('p',{className:'stat-card-label'},item.label)
+      ))
+    ),
+    h('div',{className:'stats-2col'},
+      h('div',{className:'stat-card'},
+        h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:4}},'월별 완독'),
+        h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:20}},'올해 매달 끝낸 책'),
+        h('div',{style:{display:'flex',alignItems:'flex-end',gap:8,height:160}},
+          byMonth.map((m,i)=>h('div',{key:i,style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:5}},
+            h('span',{style:{fontSize:12,fontWeight:700,color:m.n>0?'var(--text)':'transparent'}},String(m.n||'')),
+            h('div',{style:{width:'100%',borderRadius:'4px 4px 0 0',background:m.n>0?'var(--primary)':'var(--track)',height:Math.max(m.n/maxM*120,8)+'px',transition:'height 0.6s'}}),
+            h('span',{style:{fontSize:11,color:'var(--muted)',marginTop:5}},m.m)
+          ))
+        )
+      ),
+      h('div',{className:'stat-card'},
+        h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:4}},'카테고리'),
+        h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:20}},'장르별 완독 비중'),
+        h('div',{style:{display:'flex',flexDirection:'column',gap:14}},
+          byCategory.map((c,i)=>h('div',{key:i,style:{display:'flex',alignItems:'center',gap:10}},
+            h('span',{style:{fontSize:13,fontWeight:600,width:44,flexShrink:0}},c.name),
+            h('div',{style:{flex:1,height:8,background:'var(--track)',borderRadius:4}},
+              h('div',{style:{height:'100%',width:(c.count/Math.max(byCategory[0].count,1)*100)+'%',background:'var(--primary)',borderRadius:4,transition:'width 0.6s'}})
+            ),
+            h('span',{style:{fontSize:13,fontWeight:700,color:'var(--muted)',width:18,textAlign:'right'}},String(c.count))
+          ))
+        )
+      )
+    ),
+    h('div',{className:'stat-card',style:{display:'flex',gap:20,alignItems:'center'}},
+      h('div',{style:{position:'relative',width:80,height:80,flexShrink:0}},
+        h(Ring,{value:streak,max:30,size:80,stroke:9,warn:true}),
+        h('div',{style:{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center'}},
+          h('span',{style:{fontSize:22,fontWeight:800}},String(streak))
+        )
+      ),
+      h('div',null,
+        h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:6}},streak+'일 연속 독서 중이에요'),
+        h('p',{style:{fontSize:13,color:'var(--muted)'}},['최고 기록 ',h('strong',null,String(bestStreak)),'일 · 올해 ',h('strong',null,String(readingDays)),'일 읽음'])
+      )
+    )
+  );
+}
+
+/* ── 목표 화면 ── */
+function GoalScreen(){
+  const{target,done}=GOAL;
+  const today=new Date();
+  const dayOfYear=Math.floor((today-new Date(today.getFullYear(),0,0))/86400000);
+  const expected=Math.round(target*dayOfYear/365);
+  const pace=done>=expected;
+  const doneBooks=BOOKS.filter(b=>b.status==='done');
+  const barPct=Math.min(done/target*100,100);
+  const expPct=Math.min(expected/target*100,100);
+  return h('div',{className:'page-inner'},
+    h('div',{className:'page-head'},h('h1',null,'목표'),h('p',null,'2026년 독서 목표')),
+    h('div',{className:'goal-hero'},
+      h('div',{className:'goal-inner'},
+        h('div',{style:{position:'relative',width:150,height:150,flexShrink:0}},
+          h(Ring,{value:done,max:target,size:150,stroke:13}),
+          h('div',{style:{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',textAlign:'center'}},
+            h('span',{style:{fontSize:32,fontWeight:800,lineHeight:1}},String(done)),
+            h('span',{style:{fontSize:14,color:'var(--muted)'}},'/ '+target+' 권')
+          )
+        ),
+        h('div',{style:{flex:1,minWidth:200}},
+          h('div',{style:{background:pace?'rgba(47,158,99,0.1)':'rgba(207,138,44,0.1)',borderRadius:10,padding:'8px 14px',display:'inline-flex',alignItems:'center',gap:6,marginBottom:18}},
+            h(Icon,{name:'arrowUp',size:14,style:{color:pace?'var(--ok)':'var(--warn)',transform:pace?'none':'rotate(180deg)'}}),
+            h('span',{style:{fontSize:13,fontWeight:700,color:pace?'var(--ok)':'var(--warn)'}},pace?'페이스보다 앞서있어요':'페이스보다 조금 뒤예요')
+          ),
+          h('div',{style:{display:'flex',flexDirection:'column',gap:10}},
+            [{label:'남은 책',val:(target-done)+'권'},{label:'현재 페이스 예상',val:expected+'권'},{label:'이번 달 권장',val:'4권'}].map((r,i)=>
+              h('div',{key:i,style:{display:'flex',justifyContent:'space-between',fontSize:14,borderBottom:'1px solid var(--border)',paddingBottom:8}},
+                h('span',{style:{color:'var(--muted)'}},r.label),h('span',{style:{fontWeight:700}},r.val)
+              )
+            )
+          )
+        )
+      ),
+      h('div',{style:{marginTop:28}},
+        h('div',{style:{position:'relative',height:10,background:'var(--track)',borderRadius:5}},
+          h('div',{style:{position:'absolute',left:0,top:0,height:'100%',width:barPct+'%',background:'var(--primary)',borderRadius:5,transition:'width 0.7s'}}),
+          h('div',{style:{position:'absolute',top:-4,bottom:-4,left:expPct+'%',width:2,background:'var(--muted)',borderRadius:1,transform:'translateX(-1px)'}})
+        ),
+        h('div',{style:{display:'flex',justifyContent:'space-between',marginTop:8,fontSize:12,color:'var(--muted)'}},
+          h('span',null,done+'권 완독'),h('span',null,'권장 '+expected+'권')
+        )
+      )
+    ),
+    h('div',{className:'stat-card'},
+      h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:4}},'올해 읽은 책'),
+      h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:16}},done+'권 완독'),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(68px,1fr))',gap:10}},
+        [...doneBooks,null].map((b,i)=>b
+          ?h('div',{key:b.id,style:{cursor:'pointer'}},h(CoverArt,{book:b,width:'100%',height:undefined,style:{aspectRatio:'5/7',width:'100%',height:'auto'}}))
+          :h('div',{key:'plus',style:{aspectRatio:'5/7',borderRadius:8,border:'2px dashed var(--border)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--faint)',cursor:'pointer'}},h(Icon,{name:'plus',size:20}))
+        )
+      )
+    )
+  );
+}
+
+/* ── 캘린더 화면 ── */
+function CalendarScreen(){
+  const[year,setYear]=useState(2026);
+  const[month,setMonth]=useState(5);
+  const{streak,bestStreak}=STATS;
+  const daysInMonth=new Date(year,month,0).getDate();
+  const firstDay=new Date(year,month-1,1).getDay();
+  const today=new Date();
+  const isToday=d=>today.getFullYear()===year&&today.getMonth()===month-1&&today.getDate()===d;
+  const getMin=d=>{const k=`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return READING_LOG[k]||0;};
+  const lv=m=>{if(m===0)return 0;if(m<30)return 1;if(m<50)return 2;if(m<70)return 3;return 4;};
+  const lvBg=['var(--surface-2)','rgba(59,91,219,0.15)','rgba(59,91,219,0.32)','rgba(59,91,219,0.56)','rgba(59,91,219,0.82)'];
+  const lvTxt=['var(--text)','var(--primary)','var(--primary)','#fff','#fff'];
+  const cells=[];
+  for(let i=0;i<firstDay;i++)cells.push(null);
+  for(let d=1;d<=daysInMonth;d++)cells.push(d);
+  const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const last7=[...Array(7)].map((_,i)=>{const d=new Date(2026,4,24+i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;return READING_LOG[k]||0;});
+  const maxL7=Math.max(...last7,1);
+  return h('div',{className:'page-inner'},
+    h('div',{className:'page-head'},h('h1',null,'캘린더'),h('p',null,'매일의 독서 흔적')),
+    h('div',{className:'streak-banner'},
+      h('div',{style:{display:'flex',alignItems:'center',gap:14}},
+        h('div',{style:{width:42,height:42,borderRadius:12,background:'rgba(207,138,44,0.2)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--warn)',flexShrink:0}},h(Icon,{name:'flame',size:22})),
+        h('div',null,
+          h('p',{style:{fontWeight:800,fontSize:17,color:'oklch(0.4 0.12 58)'}},streak+'일 연속'),
+          h('p',{style:{fontSize:12,color:'oklch(0.5 0.1 58)'}},'최고 '+bestStreak+'일 · 오늘도 기록을 이어가요')
+        )
+      ),
+      h('div',{style:{display:'flex',gap:3,alignItems:'flex-end',height:32,flexShrink:0}},
+        last7.map((m,i)=>h('div',{key:i,style:{width:9,borderRadius:'2px 2px 0 0',background:m>0?'var(--warn)':'rgba(207,138,44,0.2)',height:Math.max(m/maxL7*32,4)+'px'}}))
+      )
+    ),
+    h('div',{className:'stat-card'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}},
+        h('button',{onClick:()=>{if(month===1){setMonth(12);setYear(y=>y-1);}else setMonth(m=>m-1);},style:{background:'none',border:'none',cursor:'pointer',color:'var(--muted)',padding:8}},h(Icon,{name:'chevL',size:18})),
+        h('span',{style:{fontWeight:800,fontSize:16}},year+'년 '+mn[month-1]),
+        h('button',{onClick:()=>{if(month===12){setMonth(1);setYear(y=>y+1);}else setMonth(m=>m+1);},style:{background:'none',border:'none',cursor:'pointer',color:'var(--muted)',padding:8}},h(Icon,{name:'chevR',size:18}))
+      ),
+      h('div',{className:'cal-grid',style:{marginBottom:6}},
+        ['일','월','화','수','목','금','토'].map((d,i)=>h('div',{key:d,style:{textAlign:'center',fontSize:12,fontWeight:600,padding:'4px 0',color:i===0?'var(--warn)':'var(--muted)'}},d))
+      ),
+      h('div',{className:'cal-grid'},
+        cells.map((d,i)=>{
+          if(!d)return h('div',{key:'e'+i,style:{aspectRatio:'1'}});
+          const m=getMin(d), l=lv(m);
+          return h('div',{key:d,className:'cal-cell'+(isToday(d)?' today':''),style:{background:lvBg[l]}},
+            h('span',{className:'cal-day',style:{color:lvTxt[l]}},String(d)),
+            m>0&&h('span',{className:'cal-min',style:{color:l>=3?'rgba(255,255,255,0.85)':'var(--primary)'}},m+'m')
+          );
+        })
+      ),
+      h('div',{style:{display:'flex',justifyContent:'flex-end',alignItems:'center',gap:6,marginTop:16}},
+        h('span',{style:{fontSize:11,color:'var(--muted)'}},'적음'),
+        lvBg.map((bg,i)=>h('div',{key:i,style:{width:14,height:14,borderRadius:3,background:bg,border:'1px solid var(--border)'}})),
+        h('span',{style:{fontSize:11,color:'var(--muted)'}},'많음')
+      )
+    )
+  );
+}
+
+/* ── 앱 셸 ── */
+function App(){
+  const getSavedTab=()=>{try{return localStorage.getItem('bt.tab')||'library';}catch{return'library';}};
+  const[tab,setTab]=useState(getSavedTab);
+  const[theme,setTheme]=useState('light');
+  const[modal,setModal]=useState(null);
+  const[books,setBooks]=useState(BOOKS);
+  const changeTab=t=>{setTab(t);try{localStorage.setItem('bt.tab',t);}catch{}};
+  useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);},[theme]);
+  useEffect(()=>{
+    const fn=e=>{if(e.key==='Escape'&&modal)setModal(null);};
+    document.addEventListener('keydown',fn);
+    return()=>document.removeEventListener('keydown',fn);
+  },[modal]);
+  const handleUpdate=updated=>setBooks(prev=>prev.map(b=>b.id===updated.id?updated:b));
+  const navItems=[{k:'library',icon:'books',label:'서재'},{k:'stats',icon:'chart',label:'통계'},{k:'goal',icon:'target',label:'목표'},{k:'calendar',icon:'calendar',label:'캘린더'}];
+  const screenMap={library:h(LibraryScreen,{books,onOpen:setModal}),stats:h(StatsScreen),goal:h(GoalScreen),calendar:h(CalendarScreen)};
+
+  return h('div',{className:'app-shell'},
+    /* ── 데스크탑 사이드바 ── */
+    h('aside',{className:'sidebar'},
+      h('div',{className:'sidebar-logo'},
+        h(Icon,{name:'bookmark',size:20,style:{color:'var(--primary)'}}),
+        h('span',{className:'sidebar-logo-text'},
+          'book',h('span',{className:'sidebar-logo-muted'},'tree')
+        )
+      ),
+      h('nav',{className:'sidebar-nav'},
+        navItems.map(item=>h('button',{key:item.k,className:'sidebar-nav-btn'+(tab===item.k?' active':''),onClick:()=>changeTab(item.k)},
+          h(Icon,{name:item.icon,size:18}),item.label
+        ))
+      ),
+      h('div',{className:'sidebar-footer'},
+        h('button',{className:'add-btn',onClick:()=>alert('책 추가 기능')},h(Icon,{name:'plus',size:16}),'책 추가'),
+        h('button',{className:'theme-btn',onClick:()=>setTheme(t=>t==='dark'?'light':'dark')},
+          h(Icon,{name:theme==='dark'?'sun':'moon',size:16}),theme==='dark'?'라이트 모드':'다크 모드'
+        )
+      )
+    ),
+    /* ── 모바일 + 콘텐츠 래퍼 ── */
+    h('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minWidth:0}},
+      /* 모바일 탑바 */
+      h('header',{className:'topbar'},
+        h('button',{className:'topbar-icon-btn'},h(Icon,{name:'menu',size:20})),
+        h('div',{className:'topbar-logo'},
+          h(Icon,{name:'bookmark',size:18,style:{color:'var(--primary)'}}),
+          'book',h('span',{style:{color:'var(--muted)'}},'tree')
+        ),
+        h('div',{className:'topbar-actions'},
+          h('button',{className:'topbar-icon-btn'},h(Icon,{name:'search',size:20})),
+          h('button',{className:'topbar-icon-btn',onClick:()=>setTheme(t=>t==='dark'?'light':'dark')},h(Icon,{name:theme==='dark'?'sun':'moon',size:20}))
+        )
+      ),
+      /* 메인 콘텐츠 */
+      h('main',{className:'main-content'},screenMap[tab]||screenMap.library),
+      /* 모바일 하단 탭바 */
+      h('nav',{className:'tabbar'},
+        navItems.map(item=>h('button',{key:item.k,className:'tabbar-btn'+(tab===item.k?' active':''),onClick:()=>changeTab(item.k)},
+          h(Icon,{name:item.icon,size:22}),item.label
+        ))
+      )
+    ),
+    modal&&h(BookModal,{book:modal,onClose:()=>setModal(null),onUpdate:handleUpdate})
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+</script>
+</body>
+</html>
