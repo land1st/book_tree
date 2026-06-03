@@ -40,48 +40,32 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── 앱 셸 ── */
-.app-shell{display:flex;height:100vh;width:100%;overflow:hidden}
+/* ── 앱 셸 (단일 모바일 레이아웃) ── */
+.app-shell{display:flex;flex-direction:column;height:100vh;width:100%;overflow:hidden}
 
-/* ── 사이드바 (데스크탑) ── */
-.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 16px;gap:4px;z-index:10}
-.sidebar-logo{display:flex;align-items:center;gap:8px;padding:10px 10px 22px}
-.sidebar-logo-text{font-size:17px;font-weight:800;letter-spacing:-0.03em}
-.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}
-.snb{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-weight:500;font-size:14px;text-align:left;transition:background .15s,color .15s;width:100%}
-.snb.active{background:var(--primary-tint);color:var(--primary);font-weight:700}
-.snb:hover:not(.active){background:var(--surface-2)}
-.sidebar-footer{border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:8px}
-.add-btn{background:var(--primary);color:#fff;border:none;border-radius:12px;height:44px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;transition:opacity .15s}
+/* ── 탑바 ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
+.topbar-logo{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:800;letter-spacing:-0.03em;color:var(--text)}
+.topbar-actions{display:flex;align-items:center;gap:6px}
+.topbar-icon-btn{background:none;border:none;color:var(--muted);padding:8px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.topbar-icon-btn:hover{background:var(--surface-2);color:var(--text)}
+.add-btn{background:var(--primary);color:#fff;border:none;border-radius:10px;height:36px;padding:0 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;transition:opacity .15s}
 .add-btn:hover{opacity:.9}
-.theme-btn{background:none;border:none;color:var(--muted);display:flex;align-items:center;gap:8px;padding:4px 10px;font-size:13px;font-weight:500}
-.theme-btn:hover{color:var(--text)}
-
-/* ── 모바일 탑바/탭바 ── */
-.topbar{display:none}
-.tabbar{display:none}
 
 /* ── 메인 콘텐츠 ── */
 .main-content{flex:1;overflow-y:auto;background:var(--bg);min-width:0}
-.page-inner{max-width:1080px;margin:0 auto;padding:28px 36px;display:flex;flex-direction:column;gap:20px;width:100%}
+.page-inner{max-width:600px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px;width:100%}
 
-/* ── 모바일 분기점 ── */
-@media(max-width:919px){
-  .sidebar{display:none}
-  .app-shell{flex-direction:column}
-  .topbar{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
-  .topbar-logo{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800;letter-spacing:-0.03em}
-  .topbar-actions{display:flex;align-items:center;gap:4px}
-  .topbar-icon-btn{background:none;border:none;color:var(--muted);padding:8px;display:flex;align-items:center;justify-content:center;border-radius:8px}
-  .topbar-icon-btn:hover{background:var(--surface-2);color:var(--text)}
-  .tabbar{display:flex;height:60px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;z-index:10}
-  .tabb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);font-size:10px;font-weight:600;transition:color .15s}
-  .tabb.active{color:var(--primary)}
-  .page-inner{padding:16px 16px 24px}
-}
+/* ── 탭바 ── */
+.tabbar{display:flex;height:60px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;z-index:10}
+.tabb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);font-size:10px;font-weight:600;transition:color .15s}
+.tabb.active{color:var(--primary)}
+
+/* ── 사이드바 완전 제거 ── */
+.sidebar{display:none!important}
 
 /* ── 히어로 배너 ── */
-.hero-banner{border-radius:18px;padding:28px 32px;display:flex;gap:24px;align-items:center;position:relative;overflow:hidden;min-height:200px}
+.hero-banner{border-radius:14px;padding:20px;display:flex;gap:16px;align-items:center;position:relative;overflow:hidden;min-height:160px}
 .hero-cover-wrap{cursor:pointer;flex-shrink:0}
 .hero-cover-wrap .cover-art{transition:transform .25s ease}
 .hero-cover-wrap:hover .cover-art{transform:translateY(-4px) rotate(-1deg)}
@@ -94,22 +78,18 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .hero-btn-p{background:#fff;color:#333;border:none;border-radius:12px;height:42px;padding:0 20px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
 .hero-btn-g{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:12px;height:42px;padding:0 18px;font-size:14px;font-weight:700}
-@media(max-width:559px){.hero-banner{padding:20px 18px;gap:16px;border-radius:14px;min-height:160px}.hero-meta{margin-bottom:12px}}
+.hero-title{font-size:22px!important}
 
 /* ── 통계 스트립 ── */
 .stat-strip{background:var(--surface);border-radius:16px;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:var(--shadow);overflow:hidden}
 .stat-cell{padding:16px 20px}
 .stat-cell+.stat-cell{border-left:1px solid var(--border)}
-@media(max-width:559px){
-  .stat-strip{grid-template-columns:repeat(2,1fr)}
-  .stat-cell:nth-child(3){border-left:none;border-top:1px solid var(--border)}
-  .stat-cell:nth-child(4){border-top:1px solid var(--border)}
-}
+.stat-strip{grid-template-columns:repeat(2,1fr)!important}
+.stat-cell:nth-child(3){border-left:none!important;border-top:1px solid var(--border)}
+.stat-cell:nth-child(4){border-top:1px solid var(--border)}
 
 /* ── 책 그리드/행 ── */
-.book-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
-@media(max-width:919px){.book-grid{grid-template-columns:repeat(4,1fr);gap:14px}}
-@media(max-width:559px){.book-grid{grid-template-columns:repeat(3,1fr);gap:10px}}
+.book-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .book-card{cursor:pointer;display:flex;flex-direction:column}
 .book-card-cover{position:relative;margin-bottom:8px}
 .book-card-cover .cover-art{transition:transform .2s ease;width:100%;aspect-ratio:5/7}
@@ -127,10 +107,8 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)
 .card{background:var(--surface);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
 
 /* ── 통계화면 ── */
-.stats-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:919px){.stats-cards{grid-template-columns:repeat(2,1fr)}}
-.stats-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:759px){.stats-2col{grid-template-columns:1fr}}
+.stats-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stats-2col{display:grid;grid-template-columns:1fr;gap:14px}
 
 /* ── 필터 & 뷰토글 ── */
 .chip{border-radius:10px;padding:7px 14px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;gap:5px;transition:background .15s,color .15s,border-color .15s}
@@ -673,11 +651,10 @@ function HeroBanner({books,readIdx,setReadIdx,onOpen}){
   if(!reading.length)return h('div',{style:{background:'var(--surface)',borderRadius:18,padding:48,textAlign:'center',color:'var(--muted)',fontSize:15}},'📚 읽는 중인 책이 없습니다');
   const book=reading[readIdx%reading.length];
   const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
-  const[c1,c2]=COVER_COLORS[(book.seed||0)%12];
-  return h('div',{className:'hero-banner',style:{background:`linear-gradient(150deg,${c1}dd,${c2})`}},
+  return h('div',{className:'hero-banner',style:{background:'linear-gradient(150deg,oklch(0.45 0.18 255),oklch(0.35 0.15 275))'}},
     h('div',{style:{position:'absolute',top:-50,right:-50,width:220,height:220,borderRadius:'50%',background:'rgba(255,255,255,.06)',pointerEvents:'none'}}),
     h('div',{className:'hero-cover-wrap',onClick:()=>onOpen(book)},
-      h(CoverArt,{book,width:130,height:182,style:{boxShadow:'0 16px 48px rgba(0,0,0,.35)'}})
+      h(CoverArt,{book,width:90,height:126,style:{boxShadow:'0 8px 24px rgba(0,0,0,.35)'}})
     ),
     h('div',{className:'hero-body'},
       h('div',{style:{display:'flex',alignItems:'center',flexWrap:'wrap',gap:6,marginBottom:10}},
@@ -753,7 +730,11 @@ function LibraryScreen({books,onOpen}){
   const[filter,setFilter]=useState('done');
   const[view,setView]=useState('grid');
   const[readIdx,setReadIdx]=useState(0);
-  const filtered=books.filter(b=>b.status===filter);
+  const filtered=books.filter(b=>b.status===filter).sort((a,b)=>{
+    if(filter==='done'){return new Date(b.finished||0)-new Date(a.finished||0);}
+    if(filter==='reading'){return new Date(b.started||0)-new Date(a.started||0);}
+    return b.id-a.id;
+  });
   const counts=Object.fromEntries(STATUS_LIST.map(f=>[f.k,books.filter(b=>b.status===f.k).length]));
   const labelMap={wish:'위시',reading:'독서중',done:'완독',dropped:'하차'};
   return h('div',{className:'page-inner'},
@@ -997,41 +978,24 @@ function App(){
   const toggleTheme=()=>setTheme(t=>t==='dark'?'light':'dark');
 
   return h('div',{className:'app-shell'},
-    // ── 사이드바 (데스크탑)
-    h('aside',{className:'sidebar'},
-      h('div',{className:'sidebar-logo'},
-        h(Icon,{name:'bookmark',size:20,style:{color:'var(--primary)'}}),
-        h('span',{className:'sidebar-logo-text'},'book',h('span',{style:{color:'var(--muted)'}},'tree'))
+    // ── 탑바
+    h('header',{className:'topbar'},
+      h('div',{className:'topbar-logo'},
+        h(Icon,{name:'bookmark',size:18,style:{color:'var(--primary)'}}),
+        'book',h('span',{style:{color:'var(--muted)'}},'tree')
       ),
-      h('nav',{className:'sidebar-nav'},
-        navItems.map(item=>h('button',{key:item.k,className:'snb'+(tab===item.k?' active':''),onClick:()=>setTab(item.k)},h(Icon,{name:item.icon,size:18}),item.label))
-      ),
-      h('div',{className:'sidebar-footer'},
-        h('button',{className:'add-btn',onClick:()=>setModal({type:'add'})},h(Icon,{name:'plus',size:16}),'책 추가'),
-        h('button',{className:'theme-btn',onClick:toggleTheme},h(Icon,{name:theme==='dark'?'sun':'moon',size:16}),theme==='dark'?'라이트 모드':'다크 모드')
+      h('div',{className:'topbar-actions'},
+        h('button',{className:'add-btn',onClick:()=>setModal({type:'add'})},h(Icon,{name:'plus',size:15}),'책 추가'),
+        h('button',{className:'topbar-icon-btn',onClick:toggleTheme},h(Icon,{name:theme==='dark'?'sun':'moon',size:20}))
       )
     ),
-    // ── 모바일 + 콘텐츠
-    h('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minWidth:0}},
-      // 모바일 탑바
-      h('header',{className:'topbar'},
-        h('div',{className:'topbar-logo'},
-          h(Icon,{name:'bookmark',size:18,style:{color:'var(--primary)'}}),
-          'book',h('span',{style:{color:'var(--muted)'}},'tree')
-        ),
-        h('div',{className:'topbar-actions'},
-          h('button',{className:'topbar-icon-btn',onClick:()=>setModal({type:'add'})},h(Icon,{name:'plus',size:20})),
-          h('button',{className:'topbar-icon-btn',onClick:toggleTheme},h(Icon,{name:theme==='dark'?'sun':'moon',size:20}))
-        )
-      ),
-      // 메인
-      h('main',{className:'main-content'},screenMap[tab]||screenMap.library),
-      // 모바일 탭바
-      h('nav',{className:'tabbar'},
-        navItems.map(item=>h('button',{key:item.k,className:'tabb'+(tab===item.k?' active':''),onClick:()=>setTab(item.k)},
-          h(Icon,{name:item.icon,size:22}),item.label
-        ))
-      )
+    // ── 메인
+    h('main',{className:'main-content'},screenMap[tab]||screenMap.library),
+    // ── 탭바
+    h('nav',{className:'tabbar'},
+      navItems.map(item=>h('button',{key:item.k,className:'tabb'+(tab===item.k?' active':''),onClick:()=>setTab(item.k)},
+        h(Icon,{name:item.icon,size:22}),item.label
+      ))
     ),
     // ── 모달
     modal?.type==='add'&&h(AddBookModal,{onClose:()=>setModal(null),onAdd:addBook}),
