@@ -9,34 +9,20 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --p-hue:255;--p-chroma:0.14;
-  --bg:oklch(0.968 0.005 255);
-  --surface:oklch(0.997 0.002 255);
-  --surface-2:oklch(0.975 0.005 255);
-  --text:oklch(0.29 0.025 262);
-  --muted:oklch(0.54 0.02 262);
-  --faint:oklch(0.7 0.015 262);
-  --border:oklch(0.915 0.008 258);
-  --track:oklch(0.92 0.01 258);
-  --ok:oklch(0.6 0.11 162);
-  --warn:oklch(0.68 0.14 58);
-  --star:oklch(0.79 0.13 76);
-  --star-empty:oklch(0.88 0.01 258);
+  --bg:oklch(0.968 0.005 255);--surface:oklch(0.997 0.002 255);--surface-2:oklch(0.975 0.005 255);
+  --text:oklch(0.29 0.025 262);--muted:oklch(0.54 0.02 262);--faint:oklch(0.7 0.015 262);
+  --border:oklch(0.915 0.008 258);--track:oklch(0.92 0.01 258);
+  --ok:oklch(0.6 0.11 162);--warn:oklch(0.68 0.14 58);--danger:oklch(0.55 0.18 20);
+  --star:oklch(0.79 0.13 76);--star-empty:oklch(0.88 0.01 258);
   --primary:oklch(0.55 var(--p-chroma) var(--p-hue));
   --primary-tint:oklch(0.93 0.03 var(--p-hue));
-  --radius:18px;
   --shadow:0 1px 2px rgba(20,28,48,.05),0 8px 24px -12px rgba(20,28,48,.14);
-  --shadow-lg:0 24px 60px -20px rgba(15,23,42,.35);
   --sidebar-w:248px;
 }
 [data-theme="dark"]{
-  --bg:oklch(0.168 0.012 264);
-  --surface:oklch(0.214 0.015 264);
-  --surface-2:oklch(0.252 0.017 264);
-  --text:oklch(0.95 0.006 258);
-  --muted:oklch(0.68 0.016 260);
-  --faint:oklch(0.55 0.018 260);
-  --border:oklch(0.3 0.016 264);
-  --track:oklch(0.32 0.02 264);
+  --bg:oklch(0.168 0.012 264);--surface:oklch(0.214 0.015 264);--surface-2:oklch(0.252 0.017 264);
+  --text:oklch(0.95 0.006 258);--muted:oklch(0.68 0.016 260);--faint:oklch(0.55 0.018 260);
+  --border:oklch(0.3 0.016 264);--track:oklch(0.32 0.02 264);
   --primary:oklch(0.68 var(--p-chroma) var(--p-hue));
   --primary-tint:oklch(0.26 0.04 var(--p-hue));
 }
@@ -44,224 +30,195 @@ html,body{height:100%;width:100%;overflow:hidden}
 body{font-family:'Pretendard Variable',-apple-system,system-ui,sans-serif;letter-spacing:-0.01em;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
 #root{display:flex;height:100vh;width:100%;overflow:hidden}
 button{font-family:inherit;letter-spacing:-0.01em;cursor:pointer}
-textarea{font-family:inherit;outline:none;}
-textarea:focus{border-color:var(--primary)!important}
+input,textarea,select{font-family:inherit;letter-spacing:-0.01em}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary)!important;box-shadow:0 0 0 3px oklch(0.55 0.14 255 / 0.12)}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
 @keyframes riseUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── 데스크탑 레이아웃 (>= 920px) ── */
+/* ── 앱 셸 ── */
 .app-shell{display:flex;height:100vh;width:100%;overflow:hidden}
 
-/* 사이드바 */
-.sidebar{
-  width:var(--sidebar-w);flex-shrink:0;
-  background:var(--surface);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;padding:20px 16px;gap:4px;
-  z-index:10;
-}
+/* ── 사이드바 (데스크탑) ── */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 16px;gap:4px;z-index:10}
 .sidebar-logo{display:flex;align-items:center;gap:8px;padding:10px 10px 22px}
 .sidebar-logo-text{font-size:17px;font-weight:800;letter-spacing:-0.03em}
-.sidebar-logo-muted{color:var(--muted)}
 .sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}
-.sidebar-nav-btn{
-  display:flex;align-items:center;gap:10px;padding:11px 12px;
-  border-radius:10px;border:none;background:transparent;
-  color:var(--text);font-weight:500;font-size:14px;text-align:left;
-  transition:background 0.15s,color 0.15s;width:100%;
-}
-.sidebar-nav-btn.active{background:var(--primary-tint);color:var(--primary);font-weight:700}
-.sidebar-nav-btn:hover:not(.active){background:var(--surface-2)}
+.snb{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;border:none;background:transparent;color:var(--text);font-weight:500;font-size:14px;text-align:left;transition:background .15s,color .15s;width:100%}
+.snb.active{background:var(--primary-tint);color:var(--primary);font-weight:700}
+.snb:hover:not(.active){background:var(--surface-2)}
 .sidebar-footer{border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:8px}
-.add-btn{
-  background:var(--primary);color:#fff;border:none;border-radius:12px;
-  height:44px;font-size:14px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
-}
-.add-btn:hover{opacity:0.9}
-.theme-btn{
-  background:none;border:none;color:var(--muted);
-  display:flex;align-items:center;gap:8px;padding:4px 10px;font-size:13px;font-weight:500;
-}
+.add-btn{background:var(--primary);color:#fff;border:none;border-radius:12px;height:44px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;transition:opacity .15s}
+.add-btn:hover{opacity:.9}
+.theme-btn{background:none;border:none;color:var(--muted);display:flex;align-items:center;gap:8px;padding:4px 10px;font-size:13px;font-weight:500}
 .theme-btn:hover{color:var(--text)}
 
-/* 메인 콘텐츠 */
-.main-content{flex:1;overflow-y:auto;background:var(--bg)}
-.page-inner{max-width:1080px;margin:0 auto;padding:28px 36px;display:flex;flex-direction:column;gap:20px;width:100%}
-
-/* 모바일 탑바/탭바 — 기본 숨김 */
+/* ── 모바일 탑바/탭바 ── */
 .topbar{display:none}
 .tabbar{display:none}
 
-/* ── 모바일 레이아웃 (< 920px) ── */
+/* ── 메인 콘텐츠 ── */
+.main-content{flex:1;overflow-y:auto;background:var(--bg);min-width:0}
+.page-inner{max-width:1080px;margin:0 auto;padding:28px 36px;display:flex;flex-direction:column;gap:20px;width:100%}
+
+/* ── 모바일 분기점 ── */
 @media(max-width:919px){
   .sidebar{display:none}
   .app-shell{flex-direction:column}
-  .main-content{flex:1;overflow-y:auto;padding-bottom:0}
-  .page-inner{padding:16px 16px 24px}
-
-  /* 탑바 */
-  .topbar{
-    display:flex;align-items:center;justify-content:space-between;
-    height:56px;padding:0 16px;
-    background:var(--surface);border-bottom:1px solid var(--border);
-    flex-shrink:0;z-index:10;
-  }
+  .topbar{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;z-index:10}
   .topbar-logo{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800;letter-spacing:-0.03em}
   .topbar-actions{display:flex;align-items:center;gap:4px}
   .topbar-icon-btn{background:none;border:none;color:var(--muted);padding:8px;display:flex;align-items:center;justify-content:center;border-radius:8px}
   .topbar-icon-btn:hover{background:var(--surface-2);color:var(--text)}
-
-  /* 탭바 */
-  .tabbar{
-    display:flex;height:60px;
-    background:var(--surface);border-top:1px solid var(--border);
-    flex-shrink:0;z-index:10;
-  }
-  .tabbar-btn{
-    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-    border:none;background:transparent;color:var(--muted);font-size:10px;font-weight:600;
-    transition:color 0.15s;
-  }
-  .tabbar-btn.active{color:var(--primary)}
-  .tabbar-btn:hover:not(.active){color:var(--text)}
+  .tabbar{display:flex;height:60px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;z-index:10}
+  .tabb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;color:var(--muted);font-size:10px;font-weight:600;transition:color .15s}
+  .tabb.active{color:var(--primary)}
+  .page-inner{padding:16px 16px 24px}
 }
 
 /* ── 히어로 배너 ── */
-.hero-banner{
-  border-radius:18px;padding:28px 32px;
-  display:flex;gap:24px;align-items:center;
-  position:relative;overflow:hidden;min-height:200px;
-}
+.hero-banner{border-radius:18px;padding:28px 32px;display:flex;gap:24px;align-items:center;position:relative;overflow:hidden;min-height:200px}
 .hero-cover-wrap{cursor:pointer;flex-shrink:0}
-.hero-cover-wrap .cover-art{transition:transform 0.25s ease}
+.hero-cover-wrap .cover-art{transition:transform .25s ease}
 .hero-cover-wrap:hover .cover-art{transform:translateY(-4px) rotate(-1deg)}
 .hero-body{flex:1;color:#fff;min-width:0}
 .hero-title{font-size:clamp(22px,3.5vw,34px);font-weight:800;letter-spacing:-0.03em;line-height:1.15;margin-bottom:6px}
-.hero-meta{font-size:13px;opacity:0.8;margin-bottom:18px}
+.hero-meta{font-size:13px;opacity:.8;margin-bottom:18px}
 .hero-progress-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px;font-weight:600}
 .hero-bar-track{height:6px;background:rgba(255,255,255,0.22);border-radius:3px}
-.hero-bar-fill{height:100%;background:#fff;border-radius:3px;transition:width 0.7s cubic-bezier(.2,.8,.2,1)}
+.hero-bar-fill{height:100%;background:#fff;border-radius:3px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.hero-btn-primary{background:#fff;color:#333;border:none;border-radius:12px;height:42px;padding:0 20px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer}
-.hero-btn-ghost{background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.35);border-radius:12px;height:42px;padding:0 18px;font-size:14px;font-weight:700;cursor:pointer}
-/* 모바일 히어로 */
-@media(max-width:559px){
-  .hero-banner{padding:20px 18px;gap:16px;border-radius:14px;min-height:160px}
-  .hero-title{font-size:22px}
-  .hero-meta{margin-bottom:12px}
-}
+.hero-btn-p{background:#fff;color:#333;border:none;border-radius:12px;height:42px;padding:0 20px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+.hero-btn-g{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:12px;height:42px;padding:0 18px;font-size:14px;font-weight:700}
+@media(max-width:559px){.hero-banner{padding:20px 18px;gap:16px;border-radius:14px;min-height:160px}.hero-meta{margin-bottom:12px}}
 
 /* ── 통계 스트립 ── */
 .stat-strip{background:var(--surface);border-radius:16px;display:grid;grid-template-columns:repeat(4,1fr);box-shadow:var(--shadow);overflow:hidden}
 .stat-cell{padding:16px 20px}
 .stat-cell+.stat-cell{border-left:1px solid var(--border)}
-.stat-label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:5px}
-.stat-value{display:flex;align-items:center;gap:4px}
-.stat-num{font-size:22px;font-weight:800}
-.stat-unit{font-size:13px;color:var(--muted);font-weight:600}
 @media(max-width:559px){
   .stat-strip{grid-template-columns:repeat(2,1fr)}
   .stat-cell:nth-child(3){border-left:none;border-top:1px solid var(--border)}
   .stat-cell:nth-child(4){border-top:1px solid var(--border)}
-  .stat-num{font-size:18px}
 }
 
-/* ── 책 그리드 ── */
+/* ── 책 그리드/행 ── */
 .book-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
 @media(max-width:919px){.book-grid{grid-template-columns:repeat(4,1fr);gap:14px}}
 @media(max-width:559px){.book-grid{grid-template-columns:repeat(3,1fr);gap:10px}}
+.book-card{cursor:pointer;display:flex;flex-direction:column}
+.book-card-cover{position:relative;margin-bottom:8px}
+.book-card-cover .cover-art{transition:transform .2s ease;width:100%;aspect-ratio:5/7}
+.book-card:hover .book-card-cover .cover-art{transform:translateY(-5px)}
+.reading-badge{position:absolute;top:6px;left:6px;background:var(--primary);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px}
+.book-card-title{font-size:12.5px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.book-row{background:var(--surface);border-radius:12px;padding:12px 16px;display:flex;gap:14px;align-items:center;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;transition:border-color .15s,box-shadow .15s}
+.book-row:hover{border-color:var(--primary);box-shadow:var(--shadow)}
 
 /* ── 커버 아트 ── */
 .cover-art{border-radius:8px;position:relative;overflow:hidden;flex-shrink:0}
 .cover-art-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;gap:3px}
 
-/* ── 책 카드 ── */
-.book-card{cursor:pointer;display:flex;flex-direction:column;gap:0}
-.book-card-cover-wrap{position:relative;margin-bottom:8px}
-.book-card-cover-wrap .cover-art{transition:transform 0.2s ease;width:100%;aspect-ratio:5/7}
-.book-card:hover .book-card-cover-wrap .cover-art{transform:translateY(-5px)}
-.reading-badge{position:absolute;top:6px;left:6px;background:var(--primary);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px}
-.book-card-title{font-size:12.5px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
-.book-card-sub{font-size:11px;color:var(--muted)}
-.book-card-reading{font-size:11px;color:var(--primary);font-weight:700}
+/* ── 공용 카드 ── */
+.card{background:var(--surface);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
 
-/* ── 책 행(리스트뷰) ── */
-.book-row{background:var(--surface);border-radius:12px;padding:12px 16px;display:flex;gap:14px;align-items:center;cursor:pointer;border:1px solid var(--border);margin-bottom:8px;transition:border-color 0.15s,box-shadow 0.15s}
-.book-row:hover{border-color:var(--primary);box-shadow:var(--shadow)}
-.book-row-info{flex:1;min-width:0}
-.book-row-title{font-weight:700;font-size:14px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.book-row-meta{font-size:12px;color:var(--muted);margin-bottom:5px}
-.progress-mini{display:flex;align-items:center;gap:8px}
-.progress-mini-bar{flex:1;height:4px;background:var(--track);border-radius:2px}
-.progress-mini-fill{height:100%;background:var(--primary);border-radius:2px}
-.progress-mini-pct{font-size:11px;color:var(--primary);font-weight:700;flex-shrink:0}
-
-/* ── 통계 화면 ── */
+/* ── 통계화면 ── */
 .stats-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media(max-width:919px){.stats-cards{grid-template-columns:repeat(2,1fr)}}
 .stats-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:759px){.stats-2col{grid-template-columns:1fr}}
-.stat-card{background:var(--surface);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
-.stat-card-icon{width:36px;height:36px;border-radius:10px;background:var(--primary-tint);display:flex;align-items:center;justify-content:center;color:var(--primary);margin-bottom:12px}
-.stat-card-val{font-size:28px;font-weight:800;line-height:1}
-.stat-card-unit{font-size:14px;color:var(--muted);font-weight:600;margin-left:3px}
-.stat-card-label{font-size:12px;color:var(--muted);font-weight:600;margin-top:5px}
 
-/* ── 목표 화면 ── */
-.goal-hero{background:var(--surface);border-radius:18px;padding:32px;box-shadow:var(--shadow)}
-.goal-inner{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
-@media(max-width:559px){.goal-inner{gap:20px}.goal-hero{padding:20px}}
-
-/* ── 캘린더 ── */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-cell{aspect-ratio:1;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid transparent;padding:2px}
-.cal-cell.today{border-color:var(--primary)}
-.cal-day{font-size:11px;font-weight:700;line-height:1.2}
-.cal-min{font-size:8px;font-weight:600;line-height:1.1}
-@media(max-width:559px){.cal-grid{gap:2px}.cal-cell{border-radius:6px}.cal-day{font-size:10px}.cal-min{font-size:7px}}
-
-/* ── 모달 ── */
-.modal-scrim{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease}
-.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:riseUp 0.32s ease;position:relative}
-.modal-hero{padding:28px 24px 24px;display:flex;gap:16px;align-items:flex-start;position:relative}
-.modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.25);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer}
-.modal-body{padding:24px;display:flex;flex-direction:column;gap:18px}
-.modal-save-btn{background:var(--primary);color:#fff;border:none;border-radius:14px;height:46px;font-size:15px;font-weight:700;width:100%}
-
-/* 필터 칩 */
-.filter-chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{border-radius:10px;padding:7px 14px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;gap:5px;cursor:pointer;transition:background 0.15s,color 0.15s,border-color 0.15s}
+/* ── 필터 & 뷰토글 ── */
+.chip{border-radius:10px;padding:7px 14px;font-size:13px;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text);display:flex;align-items:center;gap:5px;transition:background .15s,color .15s,border-color .15s}
 .chip.active{background:var(--primary);color:#fff;border-color:transparent}
-.chip-count{border-radius:10px;padding:1px 7px;font-size:11px;background:var(--surface-2)}
-.chip.active .chip-count{background:rgba(255,255,255,0.25)}
-
-/* 뷰 토글 */
-.view-toggle{display:flex;gap:4px}
+.chip-cnt{border-radius:10px;padding:1px 7px;font-size:11px;background:var(--surface-2)}
+.chip.active .chip-cnt{background:rgba(255,255,255,.25)}
 .view-btn{border:none;border-radius:8px;padding:7px;display:flex;align-items:center;background:transparent;color:var(--muted)}
 .view-btn.active{background:var(--primary-tint);color:var(--primary)}
 
-/* 섹션 헤더 */
-.shelf-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
-.shelf-title{font-size:18px;font-weight:800}
-.shelf-count{font-size:13px;color:var(--muted)}
+/* ── 모달 공통 ── */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:1000;display:flex;justify-content:center;animation:fadeIn .2s ease}
+/* 모바일: 하단 시트 */
+.scrim{align-items:flex-end}
+/* 데스크탑: 중앙 팝업 */
+@media(min-width:920px){.scrim{align-items:center}}
+.sheet{background:var(--surface);width:100%;max-width:540px;max-height:90vh;overflow-y:auto;position:relative;animation:riseUp .3s ease}
+/* 모바일 시트 */
+.sheet{border-radius:24px 24px 0 0}
+/* 데스크탑 중앙 */
+@media(min-width:920px){.sheet{border-radius:20px;margin:0 16px}}
 
-/* 페이지 헤더 */
-.page-head{margin-bottom:4px}
+/* ── 모달 공통 요소 ── */
+.sheet-header{padding:28px 24px 22px;display:flex;gap:16px;align-items:flex-start;position:relative}
+.sheet-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.25);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#fff}
+.sheet-body{padding:0 24px 28px;display:flex;flex-direction:column;gap:16px}
+
+/* ── 폼 요소 ── */
+.field-label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:7px;display:block}
+.field-input{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.field-select{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;color:var(--text);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.field-textarea{width:100%;background:var(--surface-2);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;color:var(--text);resize:none;min-height:72px;transition:border-color .15s}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.field-row{grid-template-columns:1fr}}
+
+/* ── 버튼 ── */
+.btn-primary{background:var(--primary);color:#fff;border:none;border-radius:12px;height:44px;font-size:14px;font-weight:700;width:100%;transition:opacity .15s}
+.btn-primary:hover{opacity:.9}
+.btn-danger{background:oklch(0.96 0.02 20);color:var(--danger);border:1.5px solid oklch(0.88 0.04 20);border-radius:12px;height:44px;font-size:14px;font-weight:700;width:100%;transition:background .15s}
+.btn-danger:hover{background:oklch(0.92 0.04 20)}
+.btn-ghost{background:var(--surface-2);color:var(--text);border:1.5px solid var(--border);border-radius:12px;height:44px;font-size:14px;font-weight:600;width:100%;transition:background .15s}
+.btn-ghost:hover{background:var(--border)}
+
+/* ── 알라딘 검색 모달 ── */
+.search-input-wrap{display:flex;gap:8px}
+.search-input-wrap .field-input{flex:1}
+.search-btn{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:0 18px;height:44px;font-size:14px;font-weight:700;flex-shrink:0;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.search-results{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;margin-top:4px}
+.search-result-item{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;border:1.5px solid var(--border);cursor:pointer;transition:border-color .15s,background .15s}
+.search-result-item:hover{border-color:var(--primary);background:var(--primary-tint)}
+.search-result-item.selected{border-color:var(--primary);background:var(--primary-tint)}
+.sri-cover{width:44px;height:62px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--surface-2)}
+.sri-info{flex:1;min-width:0}
+.sri-title{font-weight:700;font-size:13px;line-height:1.3;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sri-author{font-size:12px;color:var(--muted)}
+.sri-publisher{font-size:11px;color:var(--faint);margin-top:2px}
+.search-empty{text-align:center;padding:32px 0;color:var(--muted);font-size:13px}
+.search-loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:28px 0;color:var(--muted);font-size:13px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+.api-key-banner{background:oklch(0.96 0.04 58);border:1.5px solid oklch(0.88 0.08 58);border-radius:10px;padding:10px 14px;font-size:12px;color:oklch(0.45 0.12 58);display:flex;gap:8px;align-items:flex-start;margin-bottom:4px}
+
+/* ── 책 편집 모달 ── */
+.status-pills{display:flex;gap:6px;flex-wrap:wrap}
+.status-btn{border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:var(--surface-2);color:var(--muted);transition:all .15s}
+.status-btn.active-wish{background:var(--surface-2);color:var(--text);border-color:var(--border)}
+.status-btn.active-reading{background:rgba(59,91,219,.12);color:var(--primary);border-color:var(--primary)}
+.status-btn.active-done{background:rgba(47,158,99,.12);color:var(--ok);border-color:var(--ok)}
+.status-btn.active-dropped{background:oklch(0.96 0.02 20);color:var(--danger);border-color:var(--danger)}
+
+/* ── 캘린더 ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-cell{aspect-ratio:1;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid transparent}
+.cal-cell.today{border-color:var(--primary)}
+@media(max-width:559px){.cal-grid{gap:2px}.cal-cell{border-radius:6px}}
+
+/* ── 목표 ── */
+.goal-card{background:var(--surface);border-radius:18px;padding:32px;box-shadow:var(--shadow)}
+.goal-inner{display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+@media(max-width:559px){.goal-inner{gap:20px}.goal-card{padding:20px}}
+
+/* 공통 ── */
+.pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;margin-right:6px;flex-shrink:0}
+.status-pill{border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;display:inline-block}
 .page-head h1{font-size:28px;font-weight:800}
 .page-head p{color:var(--muted);font-size:13px;margin-top:4px}
 @media(max-width:559px){.page-head h1{font-size:22px}}
-
-/* 스트릭 배너 */
+.shelf-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.divider{height:1px;background:var(--border);margin:4px 0}
 .streak-banner{background:oklch(0.95 0.04 58);border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-
-/* 펄스 dot */
-.pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;margin-right:6px;flex-shrink:0}
-/* status pill */
-.status-pill{border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;display:inline-block}
 </style>
 </head>
 <body>
@@ -269,30 +226,98 @@ textarea:focus{border-color:var(--primary)!important}
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script>
-const {useState,useEffect,useRef}=React;
+const {useState,useEffect,useRef,useCallback}=React;
 const h=React.createElement;
 
-/* ── 데이터 ── */
-const BOOKS=[
-  {id:1,title:'죄와 벌 1',author:'도스토옙스키',pages:512,page:168,status:'reading',rating:0,review:'',category:'고전',started:'2026-05-01',finished:null,seed:0},
-  {id:2,title:'죄와 벌 2',author:'도스토옙스키',pages:489,page:0,status:'wish',rating:0,review:'',category:'고전',started:null,finished:null,seed:1},
-  {id:3,title:'아버지의 해방일지',author:'정지아',pages:284,page:284,status:'done',rating:4,review:'묵직한 여운이 남는 소설',category:'소설',started:'2026-01-05',finished:'2026-01-18',seed:2},
-  {id:4,title:'각각의 계절',author:'권여선',pages:312,page:312,status:'done',rating:3.5,review:'',category:'소설',started:'2026-02-01',finished:'2026-02-14',seed:3},
-  {id:5,title:'안녕 주정뱅이',author:'권여선',pages:268,page:268,status:'done',rating:4,review:'',category:'소설',started:'2026-02-15',finished:'2026-02-28',seed:4},
-  {id:6,title:'바이너리 코드 2',author:'이재인',pages:352,page:352,status:'done',rating:4,review:'',category:'SF',started:'2026-03-01',finished:'2026-03-15',seed:5},
-  {id:7,title:'바이너리 코드 1',author:'이재인',pages:340,page:340,status:'done',rating:4,review:'',category:'SF',started:'2026-03-16',finished:'2026-03-30',seed:6},
-  {id:8,title:'은마',author:'안정효',pages:296,page:296,status:'done',rating:3.5,review:'',category:'소설',started:'2026-04-01',finished:'2026-04-10',seed:7},
-  {id:9,title:'물고기는 존재하지 않는다',author:'룰루 밀러',pages:300,page:300,status:'done',rating:5,review:'인생 책',category:'에세이',started:'2026-04-11',finished:'2026-04-25',seed:8},
-  {id:10,title:'시간을 파는 상점',author:'김선영',pages:320,page:320,status:'done',rating:4,review:'',category:'소설',started:'2026-04-26',finished:'2026-05-10',seed:9},
-  {id:11,title:'채식주의자',author:'한강',pages:247,page:120,status:'reading',rating:0,review:'',category:'소설',started:'2026-05-11',finished:null,seed:10},
-  {id:12,title:'킬러의 보디가드',author:'장강명',pages:380,page:0,status:'dropped',rating:2,review:'중간에 포기',category:'소설',started:'2026-01-20',finished:null,seed:11},
-];
-const READING_LOG={'2026-05-04':40,'2026-05-06':55,'2026-05-07':35,'2026-05-10':80,'2026-05-11':45,'2026-05-14':40,'2026-05-15':50,'2026-05-17':25,'2026-05-18':60,'2026-05-19':35,'2026-05-22':40,'2026-05-23':55,'2026-05-24':50,'2026-05-25':30,'2026-05-26':45,'2026-05-27':60,'2026-05-28':40,'2026-05-29':35,'2026-05-30':55};
-const GOAL={year:2026,target:30,done:7};
-const STATS={finishedCount:7,pagesThisYear:2174,readingDays:64,streak:9,bestStreak:23,avgRating:3.8,minutesThisYear:3120,byCategory:[{name:'소설',count:4},{name:'SF',count:2},{name:'에세이',count:1},{name:'인문',count:0}],byMonth:[{m:'1월',n:1},{m:'2월',n:2},{m:'3월',n:2},{m:'4월',n:2},{m:'5월',n:0},{m:'6월',n:0}]};
-const COVER_COLORS=[['#4a7c8a','#2d5a6a'],['#7a5c8a','#5a3c6a'],['#5a8a6a','#3a6a4a'],['#8a6a4a','#6a4a2a'],['#5a6a8a','#3a4a6a'],['#8a5a6a','#6a3a4a'],['#6a8a5a','#4a6a3a'],['#7a6a5a','#5a4a3a'],['#5a7a8a','#3a5a6a'],['#8a7a5a','#6a5a3a'],['#6a5a7a','#4a3a5a'],['#7a8a6a','#5a6a4a']];
+/* ══════════════════════════════════
+   CONFIG
+══════════════════════════════════ */
+// 알라딘 API 키를 여기에 입력하세요
+const ALADIN_TTB_KEY = 'YOUR_TTB_KEY_HERE';
+// CORS 프록시: GitHub Pages 배포 시 서버 프록시로 교체 필요
+// 예) const ALADIN_PROXY = 'https://your-api-server.com/api/aladin?query=';
+// 개발 테스트용 공용 프록시 (실제 배포 시 자체 서버 사용 권장)
+const ALADIN_PROXY = 'https://corsproxy.io/?url=';
 
-/* ── 공용 컴포넌트 ── */
+/* ══════════════════════════════════
+   초기 데이터
+══════════════════════════════════ */
+const SEED_BOOKS=[
+  {id:1,title:'죄와 벌 1',author:'도스토옙스키',pages:512,page:168,status:'reading',rating:0,review:'',category:'고전',started:'2026-05-01',finished:null,seed:0,cover:null,isbn:''},
+  {id:2,title:'죄와 벌 2',author:'도스토옙스키',pages:489,page:0,status:'wish',rating:0,review:'',category:'고전',started:null,finished:null,seed:1,cover:null,isbn:''},
+  {id:3,title:'아버지의 해방일지',author:'정지아',pages:284,page:284,status:'done',rating:4,review:'묵직한 여운이 남는 소설',category:'소설',started:'2026-01-05',finished:'2026-01-18',seed:2,cover:null,isbn:''},
+  {id:4,title:'각각의 계절',author:'권여선',pages:312,page:312,status:'done',rating:3.5,review:'',category:'소설',started:'2026-02-01',finished:'2026-02-14',seed:3,cover:null,isbn:''},
+  {id:5,title:'안녕 주정뱅이',author:'권여선',pages:268,page:268,status:'done',rating:4,review:'',category:'소설',started:'2026-02-15',finished:'2026-02-28',seed:4,cover:null,isbn:''},
+  {id:6,title:'바이너리 코드 2',author:'이재인',pages:352,page:352,status:'done',rating:4,review:'',category:'SF',started:'2026-03-01',finished:'2026-03-15',seed:5,cover:null,isbn:''},
+  {id:7,title:'바이너리 코드 1',author:'이재인',pages:340,page:340,status:'done',rating:4,review:'',category:'SF',started:'2026-03-16',finished:'2026-03-30',seed:6,cover:null,isbn:''},
+  {id:8,title:'은마',author:'안정효',pages:296,page:296,status:'done',rating:3.5,review:'',category:'소설',started:'2026-04-01',finished:'2026-04-10',seed:7,cover:null,isbn:''},
+  {id:9,title:'물고기는 존재하지 않는다',author:'룰루 밀러',pages:300,page:300,status:'done',rating:5,review:'인생 책',category:'에세이',started:'2026-04-11',finished:'2026-04-25',seed:8,cover:null,isbn:''},
+  {id:10,title:'시간을 파는 상점',author:'김선영',pages:320,page:320,status:'done',rating:4,review:'',category:'소설',started:'2026-04-26',finished:'2026-05-10',seed:9,cover:null,isbn:''},
+  {id:11,title:'채식주의자',author:'한강',pages:247,page:120,status:'reading',rating:0,review:'',category:'소설',started:'2026-05-11',finished:null,seed:10,cover:null,isbn:''},
+  {id:12,title:'킬러의 보디가드',author:'장강명',pages:380,page:0,status:'dropped',rating:2,review:'중간에 포기',category:'소설',started:'2026-01-20',finished:null,seed:11,cover:null,isbn:''},
+];
+const READING_LOG_SEED={'2026-05-04':40,'2026-05-06':55,'2026-05-07':35,'2026-05-10':80,'2026-05-11':45,'2026-05-14':40,'2026-05-15':50,'2026-05-17':25,'2026-05-18':60,'2026-05-19':35,'2026-05-22':40,'2026-05-23':55,'2026-05-24':50,'2026-05-25':30,'2026-05-26':45,'2026-05-27':60,'2026-05-28':40,'2026-05-29':35,'2026-05-30':55};
+
+/* ── localStorage 헬퍼 ── */
+function lsGet(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch{return def;}}
+function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch{}}
+
+/* ── 알라딘 API 검색 ── */
+async function searchAladin(query){
+  if(ALADIN_TTB_KEY==='YOUR_TTB_KEY_HERE'){
+    // API 키 없을 때 Mock 데이터 반환
+    return getMockResults(query);
+  }
+  const url=`http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=${ALADIN_TTB_KEY}&Query=${encodeURIComponent(query)}&QueryType=Keyword&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101`;
+  try{
+    const res=await fetch(ALADIN_PROXY+encodeURIComponent(url));
+    const data=await res.json();
+    return (data.item||[]).map(item=>({
+      title:item.title,
+      author:item.author.replace(/\s*\(지은이\)/,'').trim(),
+      cover:item.cover,
+      publisher:item.publisher,
+      pages:0,
+      isbn:item.isbn13||item.isbn||'',
+      category:mapCategory(item.categoryName||''),
+      description:item.description||'',
+    }));
+  }catch(e){
+    console.error('알라딘 API 오류:',e);
+    return getMockResults(query);
+  }
+}
+
+function mapCategory(cat){
+  if(cat.includes('소설'))return'소설';
+  if(cat.includes('에세이')||cat.includes('산문'))return'에세이';
+  if(cat.includes('시'))return'시';
+  if(cat.includes('과학'))return'과학';
+  if(cat.includes('역사'))return'역사';
+  if(cat.includes('인문'))return'인문';
+  if(cat.includes('자기계발'))return'자기계발';
+  if(cat.includes('경제')||cat.includes('경영'))return'경영/경제';
+  if(cat.includes('SF')||cat.includes('판타지'))return'SF/판타지';
+  return'기타';
+}
+
+function getMockResults(query){
+  const mock=[
+    {title:'채식주의자',author:'한강',cover:'https://image.aladin.co.kr/product/303/6/cover/k032636551_1.jpg',publisher:'창비',pages:247,isbn:'9788936434120',category:'소설',description:''},
+    {title:'소년이 온다',author:'한강',cover:'https://image.aladin.co.kr/product/4602/17/cover/8936434128_1.jpg',publisher:'창비',pages:216,isbn:'9788936434489',category:'소설',description:''},
+    {title:'82년생 김지영',author:'조남주',cover:'https://image.aladin.co.kr/product/13173/16/cover/k432533748_1.jpg',publisher:'민음사',pages:190,isbn:'9788937473135',category:'소설',description:''},
+    {title:'아몬드',author:'손원평',cover:'https://image.aladin.co.kr/product/15229/4/cover/8954651135_1.jpg',publisher:'창비',pages:264,isbn:'9788954651134',category:'소설',description:''},
+    {title:'달러구트 꿈 백화점',author:'이미예',cover:'https://image.aladin.co.kr/product/24695/75/cover/k392730743_1.jpg',publisher:'팩토리나인',pages:302,isbn:'9791165341909',category:'소설',description:''},
+  ].filter(b=>b.title.includes(query)||b.author.includes(query)||query.length<2);
+  return mock.length?mock:mock.slice(0,3);
+}
+
+/* ══════════════════════════════════
+   상수
+══════════════════════════════════ */
+const COVER_COLORS=[['#4a7c8a','#2d5a6a'],['#7a5c8a','#5a3c6a'],['#5a8a6a','#3a6a4a'],['#8a6a4a','#6a4a2a'],['#5a6a8a','#3a4a6a'],['#8a5a6a','#6a3a4a'],['#6a8a5a','#4a6a3a'],['#7a6a5a','#5a4a3a'],['#5a7a8a','#3a5a6a'],['#8a7a5a','#6a5a3a'],['#6a5a7a','#4a3a5a'],['#7a8a6a','#5a6a4a']];
+const CATEGORIES=['소설','에세이','시','SF/판타지','고전','역사','인문','과학','자기계발','경영/경제','기타'];
+const STATUS_LIST=[{k:'wish',label:'위시'},{ k:'reading',label:'독서중'},{k:'done',label:'완독'},{k:'dropped',label:'하차'}];
 const ICONS={
   books:'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z',
   chart:'M18 20V10 M12 20V4 M6 20v-6',
@@ -307,30 +332,40 @@ const ICONS={
   grid:'M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z',
   list:'M8 6h13 M8 12h13 M8 18h13 M3 6h.01 M3 12h.01 M3 18h.01',
   x:'M18 6 6 18 M6 6l12 12',
-  chevL:'M15 18l-6-6 6-6',
-  chevR:'M9 18l6-6-6-6',
+  chevL:'M15 18l-6-6 6-6',chevR:'M9 18l6-6-6-6',
   heart:'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z',
   arrowUp:'M12 19V5 M5 12l7-7 7 7',
   search:'M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0',
-  bell:'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0',
   menu:'M3 12h18 M3 6h18 M3 18h18',
+  pencil:'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7 M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z',
+  trash:'M3 6h18 M8 6V4h8v2 M19 6l-1 14H6L5 6',
+  info:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 8h.01 M12 12v4',
   book:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20',
 };
 
-function Icon({name,size=18,style={},className=''}){
-  return h('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.7,strokeLinecap:'round',strokeLinejoin:'round',style:{flexShrink:0,...style},className},
+/* ══════════════════════════════════
+   공용 컴포넌트
+══════════════════════════════════ */
+function Icon({name,size=18,style={}}){
+  return h('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.7,strokeLinecap:'round',strokeLinejoin:'round',style:{flexShrink:0,...style}},
     h('path',{d:ICONS[name]||ICONS.book})
   );
 }
 
-function CoverArt({book,width,height,className='',style={}}){
-  const[c1,c2]=COVER_COLORS[book.seed%12];
-  const fontSize=width<80?10:width<130?12:14;
-  const authorSize=width<80?8:10;
-  return h('div',{className:'cover-art '+className,style:{width,height,background:`linear-gradient(150deg,${c1},${c2})`,...style}},
+function CoverArt({book,width,height,style={}}){
+  // 알라딘에서 가져온 실제 커버 이미지가 있으면 사용
+  if(book.cover){
+    return h('div',{className:'cover-art',style:{width,height,...style}},
+      h('img',{src:book.cover,alt:book.title,style:{width:'100%',height:'100%',objectFit:'cover',borderRadius:8}})
+    );
+  }
+  const[c1,c2]=COVER_COLORS[(book.seed||0)%12];
+  const nw=typeof width==='number'?width:80;
+  const fs=nw<80?10:nw<130?12:14;
+  return h('div',{className:'cover-art',style:{width,height,background:`linear-gradient(150deg,${c1},${c2})`,...style}},
     h('div',{className:'cover-art-inner'},
-      h('p',{style:{color:'#fff',fontWeight:700,fontSize,textAlign:'center',lineHeight:1.3,letterSpacing:'-0.02em',display:'-webkit-box',WebkitLineClamp:3,WebkitBoxOrient:'vertical',overflow:'hidden'}},book.title),
-      h('p',{style:{color:'rgba(255,255,255,0.65)',fontSize:authorSize,textAlign:'center',marginTop:2}},book.author)
+      h('p',{style:{color:'#fff',fontWeight:700,fontSize:fs,textAlign:'center',lineHeight:1.3,display:'-webkit-box',WebkitLineClamp:3,WebkitBoxOrient:'vertical',overflow:'hidden'}},book.title),
+      h('p',{style:{color:'rgba(255,255,255,.65)',fontSize:fs-3,textAlign:'center',marginTop:2}},book.author)
     )
   );
 }
@@ -340,181 +375,344 @@ function Stars({rating,onChange,size=14}){
   return h('div',{style:{display:'flex',gap:2,cursor:onChange?'pointer':'default'}},
     [1,2,3,4,5].map(i=>{
       const val=hov??rating;
-      const full=val>=i, half=!full&&val>=i-0.5;
+      const full=val>=i,half=!full&&val>=i-0.5;
       return h('span',{key:i,
         style:{fontSize:size,color:(full||half)?'var(--star)':'var(--star-empty)',userSelect:'none'},
         onMouseMove:onChange?e=>{const r=e.currentTarget.getBoundingClientRect();setHov(e.clientX-r.left<r.width/2?i-0.5:i);}:undefined,
         onMouseLeave:onChange?()=>setHov(null):undefined,
-        onClick:onChange?(()=>{if(hov!=null)onChange(hov);}):undefined
+        onClick:onChange?()=>{if(hov!=null)onChange(hov);}:undefined
       },full?'★':half?'⯨':'☆');
     })
   );
 }
 
 function Ring({value,max,size=150,stroke=10,warn=false}){
-  const r=size/2-stroke, c=2*Math.PI*r, pct=Math.min(value/max,1);
+  const r=size/2-stroke,c=2*Math.PI*r,pct=Math.min(value/max,1);
   return h('svg',{width:size,height:size,viewBox:`0 0 ${size} ${size}`},
     h('circle',{cx:size/2,cy:size/2,r,fill:'none',stroke:'var(--track)',strokeWidth:stroke}),
     h('circle',{cx:size/2,cy:size/2,r,fill:'none',stroke:warn?'var(--warn)':'var(--primary)',strokeWidth:stroke,
       strokeDasharray:c,strokeDashoffset:c*(1-pct),strokeLinecap:'round',
       transform:`rotate(-90 ${size/2} ${size/2})`,
-      style:{transition:'stroke-dashoffset 0.7s cubic-bezier(.2,.8,.2,1)'}
+      style:{transition:'stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1)'}
     })
   );
 }
 
 function StatusPill({status}){
-  const map={wish:{label:'위시',bg:'var(--surface-2)',color:'var(--muted)'},reading:{label:'독서중',bg:'rgba(59,91,219,0.12)',color:'var(--primary)'},done:{label:'완독',bg:'rgba(47,158,99,0.12)',color:'var(--ok)'},dropped:{label:'하차',bg:'rgba(180,60,60,0.12)',color:'oklch(0.5 0.1 0)'}};
+  const map={wish:{l:'위시',bg:'var(--surface-2)',c:'var(--muted)'},reading:{l:'독서중',bg:'rgba(59,91,219,.12)',c:'var(--primary)'},done:{l:'완독',bg:'rgba(47,158,99,.12)',c:'var(--ok)'},dropped:{l:'하차',bg:'oklch(0.96 0.02 20)',c:'var(--danger)'}};
   const m=map[status]||map.wish;
-  return h('span',{className:'status-pill',style:{background:m.bg,color:m.color}},m.label);
+  return h('span',{className:'status-pill',style:{background:m.bg,color:m.c}},m.l);
 }
 
-/* ── 책 상세 모달 ── */
-function BookModal({book,onClose,onUpdate}){
-  const[rating,setRating]=useState(book.rating);
-  const[review,setReview]=useState(book.review||'');
-  const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
-  const[c1,c2]=COVER_COLORS[book.seed%12];
+function ModalScrim({onClose,children}){
   useEffect(()=>{
     document.body.style.overflow='hidden';
-    return()=>{document.body.style.overflow='';};
+    const fn=e=>{if(e.key==='Escape')onClose();};
+    document.addEventListener('keydown',fn);
+    return()=>{document.body.style.overflow='';document.removeEventListener('keydown',fn);};
   },[]);
-  return h('div',{className:'modal-scrim',onClick:e=>{if(e.target===e.currentTarget)onClose();}},
-    h('div',{className:'modal-sheet'},
-      h('div',{className:'modal-hero',style:{background:`linear-gradient(150deg,${c1},${c2})`}},
-        h(CoverArt,{book,width:90,height:126}),
-        h('div',{style:{flex:1,color:'#fff',paddingTop:4,minWidth:0}},
-          h(StatusPill,{status:book.status}),
-          h('h2',{style:{fontSize:22,fontWeight:800,letterSpacing:'-0.03em',marginTop:8,lineHeight:1.2}},book.title),
-          h('p',{style:{opacity:0.8,fontSize:13,marginTop:4}},[book.author,' · ',book.pages,'p · ',book.category])
-        ),
-        h('button',{className:'modal-close',onClick:onClose},h(Icon,{name:'x',size:16}))
-      ),
-      h('div',{className:'modal-body'},
-        book.status==='reading'&&h('div',null,
-          h('div',{style:{display:'flex',justifyContent:'space-between',fontSize:13,color:'var(--muted)',marginBottom:7}},
-            h('span',null,[book.page,' / ',book.pages,'p']),h('span',null,[pct,'%'])
+  return h('div',{className:'scrim',onClick:e=>{if(e.target===e.currentTarget)onClose();}},children);
+}
+
+/* ══════════════════════════════════
+   알라딘 검색 모달
+══════════════════════════════════ */
+function AddBookModal({onClose,onAdd}){
+  const[step,setStep]=useState('search'); // 'search' | 'confirm'
+  const[query,setQuery]=useState('');
+  const[results,setResults]=useState([]);
+  const[loading,setLoading]=useState(false);
+  const[selected,setSelected]=useState(null);
+  // 선택 후 편집 필드
+  const[form,setForm]=useState({title:'',author:'',pages:'',category:'소설',status:'wish',started:'',cover:null,isbn:''});
+  const inputRef=useRef(null);
+  useEffect(()=>{if(inputRef.current)inputRef.current.focus();},[]);
+
+  async function doSearch(){
+    if(!query.trim())return;
+    setLoading(true);setResults([]);
+    const res=await searchAladin(query.trim());
+    setResults(res);setLoading(false);
+  }
+  function handleKey(e){if(e.key==='Enter')doSearch();}
+
+  function selectBook(item){
+    setSelected(item);
+    setForm({
+      title:item.title,author:item.author,
+      pages:item.pages||'',category:item.category||'소설',
+      status:'wish',started:'',cover:item.cover||null,isbn:item.isbn||'',
+    });
+    setStep('confirm');
+  }
+
+  function handleAdd(){
+    if(!form.title.trim()||!form.author.trim())return;
+    onAdd({
+      title:form.title.trim(),author:form.author.trim(),
+      pages:parseInt(form.pages)||0,page:0,
+      category:form.category,status:form.status,
+      started:form.status==='reading'?(form.started||new Date().toISOString().slice(0,10)):null,
+      finished:null,rating:0,review:'',
+      cover:form.cover,isbn:form.isbn,
+      seed:Math.floor(Math.random()*12),
+      id:Date.now(),
+    });
+    onClose();
+  }
+
+  function upd(k,v){setForm(f=>({...f,[k]:v}));}
+
+  const hasKey=ALADIN_TTB_KEY!=='YOUR_TTB_KEY_HERE';
+
+  return h(ModalScrim,{onClose},
+    h('div',{className:'sheet',style:{maxWidth:560}},
+      // ── 헤더
+      h('div',{style:{padding:'22px 24px 0',display:'flex',alignItems:'center',justifyContent:'space-between'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+          step==='confirm'&&h('button',{onClick:()=>setStep('search'),style:{background:'none',border:'none',color:'var(--muted)',padding:'4px 8px 4px 0',fontSize:13,fontWeight:600,display:'flex',alignItems:'center',gap:4}},
+            h(Icon,{name:'chevL',size:14}),'검색으로'
           ),
-          h('div',{style:{height:7,background:'var(--track)',borderRadius:4}},
-            h('div',{style:{height:'100%',width:pct+'%',background:'var(--primary)',borderRadius:4}})
+          h('h2',{style:{fontSize:18,fontWeight:800}},step==='search'?'책 추가':'책 정보 확인')
+        ),
+        h('button',{onClick:onClose,style:{background:'var(--surface-2)',border:'none',borderRadius:'50%',width:32,height:32,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--muted)'}},h(Icon,{name:'x',size:16}))
+      ),
+      h('div',{className:'sheet-body',style:{paddingTop:16}},
+        step==='search'?[
+          !hasKey&&h('div',{key:'banner',className:'api-key-banner'},
+            h(Icon,{name:'info',size:14,style:{flexShrink:0,marginTop:1}}),
+            h('span',null,'알라딘 API 키가 설정되지 않아 Mock 데이터로 표시됩니다. ALADIN_TTB_KEY 값을 설정하면 실제 도서 데이터를 검색할 수 있습니다.')
+          ),
+          h('div',{key:'si',className:'search-input-wrap'},
+            h('input',{ref:inputRef,className:'field-input',placeholder:'책 제목 또는 저자 검색...',value:query,onChange:e=>setQuery(e.target.value),onKeyDown:handleKey}),
+            h('button',{className:'search-btn',onClick:doSearch},h(Icon,{name:'search',size:15}),'검색')
+          ),
+          loading&&h('div',{key:'ld',className:'search-loading'},h('div',{className:'spinner'}),'검색 중...'),
+          !loading&&results.length>0&&h('div',{key:'res',className:'search-results'},
+            results.map((item,i)=>h('div',{key:i,className:'search-result-item',onClick:()=>selectBook(item)},
+              item.cover
+                ?h('img',{src:item.cover,className:'sri-cover',alt:item.title,onError:e=>{e.target.style.display='none';}})
+                :h('div',{className:'sri-cover',style:{display:'flex',alignItems:'center',justifyContent:'center',color:'var(--faint)'}},'📖'),
+              h('div',{className:'sri-info'},
+                h('p',{className:'sri-title'},item.title),
+                h('p',{className:'sri-author'},item.author),
+                h('p',{className:'sri-publisher'},item.publisher||'')
+              ),
+              h(Icon,{name:'chevR',size:16,style:{color:'var(--faint)',flexShrink:0}})
+            ))
+          ),
+          !loading&&results.length===0&&query&&h('div',{key:'em',className:'search-empty'},'검색 결과가 없습니다.\n제목이나 저자명을 다시 확인해보세요.'),
+          h('div',{key:'div',className:'divider'}),
+          h('p',{key:'hint',style:{fontSize:12,color:'var(--muted)',textAlign:'center'}},'검색 결과가 없으면 직접 입력할 수도 있어요'),
+          h('button',{key:'manual',className:'btn-ghost',onClick:()=>{setForm({title:query,author:'',pages:'',category:'소설',status:'wish',started:'',cover:null,isbn:''});setStep('confirm');}},
+            '직접 입력하기'
+          ),
+        ]:[
+          // ── confirm 단계
+          h('div',{key:'cf'},
+            // 커버 + 기본정보
+            selected&&selected.cover&&h('div',{style:{display:'flex',gap:14,alignItems:'flex-start',marginBottom:16}},
+              h('img',{src:selected.cover,alt:selected.title,style:{width:60,height:84,borderRadius:8,objectFit:'cover',flexShrink:0}}),
+              h('div',{style:{flex:1,minWidth:0}},
+                h('p',{style:{fontWeight:700,fontSize:15,lineHeight:1.3,marginBottom:4}},selected.title),
+                h('p',{style:{fontSize:13,color:'var(--muted)'}},[selected.author,selected.publisher?' · '+selected.publisher:''].join(''))
+              )
+            ),
+            h('label',null,h('span',{className:'field-label'},'제목'),h('input',{className:'field-input',value:form.title,onChange:e=>upd('title',e.target.value)})),
+            h('label',{style:{marginTop:12,display:'block'}},h('span',{className:'field-label'},'저자'),h('input',{className:'field-input',value:form.author,onChange:e=>upd('author',e.target.value)})),
+            h('div',{className:'field-row',style:{marginTop:12}},
+              h('label',null,h('span',{className:'field-label'},'총 페이지'),h('input',{className:'field-input',type:'number',min:1,placeholder:'예) 300',value:form.pages,onChange:e=>upd('pages',e.target.value)})),
+              h('label',null,h('span',{className:'field-label'},'카테고리'),h('select',{className:'field-select',value:form.category,onChange:e=>upd('category',e.target.value)},
+                CATEGORIES.map(c=>h('option',{key:c,value:c},c))
+              ))
+            ),
+            h('div',{style:{marginTop:12}},
+              h('span',{className:'field-label'},'독서 상태'),
+              h('div',{className:'status-pills'},
+                STATUS_LIST.map(s=>h('button',{key:s.k,
+                  className:'status-btn'+(form.status===s.k?' active-'+s.k:''),
+                  onClick:()=>upd('status',s.k)
+                },s.label))
+              )
+            ),
+            form.status==='reading'&&h('label',{style:{marginTop:12,display:'block'}},
+              h('span',{className:'field-label'},'독서 시작일'),
+              h('input',{className:'field-input',type:'date',value:form.started,onChange:e=>upd('started',e.target.value)})
+            ),
+            h('div',{style:{marginTop:8,display:'flex',gap:8}},
+              h('button',{className:'btn-ghost',onClick:onClose},'취소'),
+              h('button',{className:'btn-primary',onClick:handleAdd,disabled:!form.title.trim()||!form.author.trim(),style:{flex:1}},'서재에 추가')
+            )
           )
-        ),
-        (book.status==='done'||book.status==='dropped')&&h('div',null,
-          h('p',{style:{fontSize:12,color:'var(--muted)',fontWeight:600,marginBottom:8}},'별점'),
-          h(Stars,{rating,onChange:setRating,size:30})
-        ),
-        h('div',null,
-          h('p',{style:{fontSize:12,color:'var(--muted)',fontWeight:600,marginBottom:8}},'한 줄 리뷰'),
-          h('textarea',{value:review,onChange:e=>setReview(e.target.value),placeholder:'감상을 남겨보세요...',
-            style:{width:'100%',background:'var(--surface-2)',border:'1px solid var(--border)',borderRadius:12,padding:'10px 14px',resize:'none',height:80,fontSize:14,color:'var(--text)'}})
-        ),
-        h('div',{style:{display:'flex',gap:20,fontSize:13,color:'var(--muted)'}},
-          book.started&&h('span',null,['📅 시작: ',book.started]),
-          book.finished&&h('span',null,['✅ 완독: ',book.finished])
-        ),
-        h('button',{className:'modal-save-btn',onClick:()=>{onUpdate({...book,rating,review});onClose();}},'저장')
+        ]
       )
     )
   );
 }
 
-/* ── 히어로 배너 ── */
+/* ══════════════════════════════════
+   책 편집/삭제 모달
+══════════════════════════════════ */
+function EditBookModal({book,onClose,onUpdate,onDelete}){
+  const[form,setForm]=useState({
+    title:book.title,author:book.author,pages:book.pages||'',
+    page:book.page||'',category:book.category||'소설',
+    status:book.status,started:book.started||'',finished:book.finished||'',
+    rating:book.rating||0,review:book.review||'',
+  });
+  const[confirmDel,setConfirmDel]=useState(false);
+  function upd(k,v){setForm(f=>({...f,[k]:v}));}
+
+  function handleSave(){
+    const today=new Date().toISOString().slice(0,10);
+    const wasReading=book.status==='reading';
+    const nowDone=form.status==='done';
+    onUpdate({
+      ...book,
+      title:form.title.trim(),author:form.author.trim(),
+      pages:parseInt(form.pages)||0,page:parseInt(form.page)||0,
+      category:form.category,status:form.status,
+      started:form.started||null,
+      finished:form.finished||(nowDone&&!book.finished?today:null),
+      rating:form.rating,review:form.review,
+    });
+    onClose();
+  }
+
+  const[c1,c2]=COVER_COLORS[(book.seed||0)%12];
+
+  return h(ModalScrim,{onClose},
+    h('div',{className:'sheet',style:{maxWidth:540}},
+      // 헤더 (커버 배경)
+      h('div',{className:'sheet-header',style:{background:book.cover?`url(${book.cover}) center/cover`:`linear-gradient(150deg,${c1},${c2})`}},
+        h(CoverArt,{book,width:76,height:107,style:{flexShrink:0}}),
+        h('div',{style:{flex:1,color:'#fff',minWidth:0,paddingTop:2}},
+          h(StatusPill,{status:book.status}),
+          h('h2',{style:{fontSize:19,fontWeight:800,letterSpacing:'-0.03em',marginTop:6,lineHeight:1.2}},book.title),
+          h('p',{style:{opacity:.8,fontSize:13,marginTop:3}},[book.author,' · ',book.category])
+        ),
+        h('button',{className:'sheet-close',onClick:onClose},h(Icon,{name:'x',size:16}))
+      ),
+      h('div',{className:'sheet-body'},
+        // 제목/저자
+        h('label',null,h('span',{className:'field-label'},'제목'),h('input',{className:'field-input',value:form.title,onChange:e=>upd('title',e.target.value)})),
+        h('label',null,h('span',{className:'field-label'},'저자'),h('input',{className:'field-input',value:form.author,onChange:e=>upd('author',e.target.value)})),
+        // 페이지
+        h('div',{className:'field-row'},
+          h('label',null,h('span',{className:'field-label'},'총 페이지'),h('input',{className:'field-input',type:'number',min:0,value:form.pages,onChange:e=>upd('pages',e.target.value)})),
+          h('label',null,h('span',{className:'field-label'},'현재 페이지'),h('input',{className:'field-input',type:'number',min:0,max:form.pages||9999,value:form.page,onChange:e=>upd('page',e.target.value)}))
+        ),
+        // 카테고리
+        h('label',null,h('span',{className:'field-label'},'카테고리'),
+          h('select',{className:'field-select',value:form.category,onChange:e=>upd('category',e.target.value)},
+            CATEGORIES.map(c=>h('option',{key:c,value:c},c))
+          )
+        ),
+        // 상태
+        h('div',null,
+          h('span',{className:'field-label'},'독서 상태'),
+          h('div',{className:'status-pills'},
+            STATUS_LIST.map(s=>h('button',{key:s.k,
+              className:'status-btn'+(form.status===s.k?' active-'+s.k:''),
+              onClick:()=>upd('status',s.k)
+            },s.label))
+          )
+        ),
+        // 날짜
+        h('div',{className:'field-row'},
+          h('label',null,h('span',{className:'field-label'},'시작일'),h('input',{className:'field-input',type:'date',value:form.started,onChange:e=>upd('started',e.target.value)})),
+          h('label',null,h('span',{className:'field-label'},'완독일'),h('input',{className:'field-input',type:'date',value:form.finished,onChange:e=>upd('finished',e.target.value)}))
+        ),
+        // 별점
+        (form.status==='done'||form.status==='dropped')&&h('div',null,
+          h('span',{className:'field-label'},'별점'),
+          h(Stars,{rating:form.rating,onChange:v=>upd('rating',v),size:26})
+        ),
+        // 리뷰
+        h('label',null,h('span',{className:'field-label'},'한 줄 리뷰'),h('textarea',{className:'field-textarea',placeholder:'감상을 남겨보세요...',value:form.review,onChange:e=>upd('review',e.target.value)})),
+        h('div',{className:'divider'}),
+        // 저장/삭제
+        confirmDel
+          ?h('div',null,
+              h('p',{style:{fontSize:13,color:'var(--danger)',fontWeight:600,marginBottom:10,textAlign:'center'}},'정말 삭제하시겠어요? 되돌릴 수 없습니다.'),
+              h('div',{style:{display:'flex',gap:8}},
+                h('button',{className:'btn-ghost',onClick:()=>setConfirmDel(false)},'취소'),
+                h('button',{className:'btn-danger',style:{flex:1},onClick:()=>{onDelete(book.id);onClose();}},'삭제')
+              )
+            )
+          :h('div',{style:{display:'flex',gap:8}},
+              h('button',{className:'btn-danger',style:{width:44,padding:0,flexShrink:0},onClick:()=>setConfirmDel(true),title:'삭제'},h(Icon,{name:'trash',size:16})),
+              h('button',{className:'btn-primary',style:{flex:1},onClick:handleSave},'저장')
+            )
+      )
+    )
+  );
+}
+
+/* ══════════════════════════════════
+   서재 화면
+══════════════════════════════════ */
 function HeroBanner({books,readIdx,setReadIdx,onOpen}){
   const reading=books.filter(b=>b.status==='reading');
   if(!reading.length)return h('div',{style:{background:'var(--surface)',borderRadius:18,padding:48,textAlign:'center',color:'var(--muted)',fontSize:15}},'📚 읽는 중인 책이 없습니다');
   const book=reading[readIdx%reading.length];
-  const pct=Math.round(book.page/book.pages*100);
-  const[c1,c2]=COVER_COLORS[book.seed%12];
+  const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
+  const[c1,c2]=COVER_COLORS[(book.seed||0)%12];
   return h('div',{className:'hero-banner',style:{background:`linear-gradient(150deg,${c1}dd,${c2})`}},
-    h('div',{style:{position:'absolute',top:-50,right:-50,width:220,height:220,borderRadius:'50%',background:'rgba(255,255,255,0.06)',pointerEvents:'none'}}),
+    h('div',{style:{position:'absolute',top:-50,right:-50,width:220,height:220,borderRadius:'50%',background:'rgba(255,255,255,.06)',pointerEvents:'none'}}),
     h('div',{className:'hero-cover-wrap',onClick:()=>onOpen(book)},
-      h(CoverArt,{book,width:130,height:182,className:'cover-art',style:{boxShadow:'0 16px 48px rgba(0,0,0,0.35)'}})
+      h(CoverArt,{book,width:130,height:182,style:{boxShadow:'0 16px 48px rgba(0,0,0,.35)'}})
     ),
     h('div',{className:'hero-body'},
       h('div',{style:{display:'flex',alignItems:'center',flexWrap:'wrap',gap:6,marginBottom:10}},
         h('span',{className:'pulse-dot'}),
-        h('span',{style:{fontSize:12,fontWeight:600,opacity:0.9,color:'#fff'}},'지금 읽는 중'),
+        h('span',{style:{fontSize:12,fontWeight:600,opacity:.9,color:'#fff'}},'지금 읽는 중'),
         reading.length>1&&h('div',{style:{display:'flex',gap:4,marginLeft:4}},
-          reading.map((_,i)=>h('span',{key:i,onClick:()=>setReadIdx(i),
-            style:{width:6,height:6,borderRadius:'50%',background:i===(readIdx%reading.length)?'#fff':'rgba(255,255,255,0.35)',cursor:'pointer',display:'inline-block'}
-          }))
+          reading.map((_,i)=>h('span',{key:i,onClick:()=>setReadIdx(i),style:{width:6,height:6,borderRadius:'50%',background:i===(readIdx%reading.length)?'#fff':'rgba(255,255,255,.35)',cursor:'pointer',display:'inline-block'}}))
         )
       ),
       h('h1',{className:'hero-title',style:{color:'#fff'}},book.title),
-      h('p',{className:'hero-meta',style:{color:'rgba(255,255,255,0.85)'}},book.author+' · '+book.pages+'p · '+book.category),
+      h('p',{className:'hero-meta',style:{color:'rgba(255,255,255,.85)'}},book.author+' · '+book.pages+'p · '+book.category),
       h('div',null,
         h('div',{className:'hero-progress-row'},h('span',null,book.page+' / '+book.pages+'p'),h('span',null,pct+'%')),
         h('div',{className:'hero-bar-track'},h('div',{className:'hero-bar-fill',style:{width:pct+'%'}}))
       ),
       h('div',{className:'hero-actions'},
-        h('button',{className:'hero-btn-primary',onClick:()=>onOpen(book)},h(Icon,{name:'clock',size:15}),'타이머 시작'),
-        h('button',{className:'hero-btn-ghost',onClick:()=>onOpen(book)},'상세')
+        h('button',{className:'hero-btn-p',onClick:()=>onOpen(book)},h(Icon,{name:'clock',size:15}),'타이머 시작'),
+        h('button',{className:'hero-btn-g',onClick:()=>onOpen(book)},'상세')
       )
     )
   );
 }
 
-/* ── 통계 스트립 ── */
-function StatStrip(){
-  const{finishedCount,pagesThisYear,readingDays,streak}=STATS;
-  const items=[{label:'완독',val:finishedCount,unit:'권',icon:null},{label:'올해 페이지',val:pagesThisYear.toLocaleString(),unit:'p',icon:null},{label:'독서일',val:readingDays,unit:'일',icon:null},{label:'연속',val:streak,unit:'일',icon:'flame'}];
+function StatStrip({books}){
+  const done=books.filter(b=>b.status==='done').length;
+  const readingBooks=books.filter(b=>b.status==='reading');
+  const pagesYear=books.filter(b=>b.status==='done').reduce((s,b)=>s+(b.pages||0),0)+readingBooks.reduce((s,b)=>s+(b.page||0),0);
   return h('div',{className:'stat-strip'},
-    items.map((item,i)=>h('div',{key:i,className:'stat-cell'},
-      h('p',{className:'stat-label'},item.label),
-      h('div',{className:'stat-value'},
-        h('span',{className:'stat-num'},String(item.val)),
-        h('span',{className:'stat-unit'},item.unit),
+    [{label:'완독',val:done,unit:'권',icon:null},{label:'올해 페이지',val:pagesYear.toLocaleString(),unit:'p',icon:null},{label:'독서일',val:64,unit:'일',icon:null},{label:'연속',val:9,unit:'일',icon:'flame'}]
+    .map((item,i)=>h('div',{key:i,className:'stat-cell'},
+      h('p',{style:{fontSize:12,color:'var(--muted)',fontWeight:600,marginBottom:5}},item.label),
+      h('div',{style:{display:'flex',alignItems:'center',gap:4}},
+        h('span',{style:{fontSize:22,fontWeight:800}},String(item.val)),
+        h('span',{style:{fontSize:13,color:'var(--muted)',fontWeight:600}},item.unit),
         item.icon&&h(Icon,{name:item.icon,size:14,style:{color:'var(--warn)',marginLeft:2}})
       )
     ))
   );
 }
 
-/* ── 서재 화면 ── */
-function LibraryScreen({books,onOpen}){
-  const[filter,setFilter]=useState('done');
-  const[view,setView]=useState('grid');
-  const[readIdx,setReadIdx]=useState(0);
-  const filters=[{k:'wish',label:'위시'},{k:'reading',label:'독서중'},{k:'done',label:'완독'},{k:'dropped',label:'하차'}];
-  const filtered=books.filter(b=>b.status===filter);
-  const counts=Object.fromEntries(filters.map(f=>[f.k,books.filter(b=>b.status===f.k).length]));
-  const labelMap={wish:'위시',reading:'독서중',done:'완독',dropped:'하차'};
-  return h('div',{className:'page-inner'},
-    h(HeroBanner,{books,readIdx,setReadIdx,onOpen}),
-    h(StatStrip),
-    h('div',null,
-      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,gap:10,flexWrap:'wrap'}},
-        h('div',{className:'filter-chips'},
-          filters.map(f=>h('button',{key:f.k,className:'chip'+(filter===f.k?' active':''),onClick:()=>setFilter(f.k)},
-            f.label,h('span',{className:'chip-count'},counts[f.k])
-          ))
-        ),
-        h('div',{className:'view-toggle'},
-          ['grid','list'].map(v=>h('button',{key:v,className:'view-btn'+(view===v?' active':''),onClick:()=>setView(v)},h(Icon,{name:v,size:16})))
-        )
-      ),
-      h('div',{className:'shelf-header'},
-        h('h2',{className:'shelf-title'},labelMap[filter]),
-        h('span',{className:'shelf-count'},filtered.length+'권')
-      ),
-      view==='grid'
-        ?h('div',{className:'book-grid'},filtered.map(b=>h(BookCard,{key:b.id,book:b,onOpen})))
-        :h('div',null,filtered.map(b=>h(BookRow,{key:b.id,book:b,onOpen})))
-    )
-  );
-}
-
 function BookCard({book,onOpen}){
   const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
   return h('div',{className:'book-card',onClick:()=>onOpen(book)},
-    h('div',{className:'book-card-cover-wrap'},
-      h(CoverArt,{book,width:'100%',height:undefined,className:'cover-art',style:{aspectRatio:'5/7',width:'100%',height:'auto'}}),
+    h('div',{className:'book-card-cover'},
+      h(CoverArt,{book,width:'100%',height:undefined,style:{aspectRatio:'5/7',width:'100%',height:'auto'}}),
       book.status==='reading'&&h('span',{className:'reading-badge'},'독서중')
     ),
     h('p',{className:'book-card-title'},book.title),
     book.status==='done'?h(Stars,{rating:book.rating,size:11}):
-    book.status==='reading'?h('p',{className:'book-card-reading'},pct+'% 읽음'):
-    h('p',{className:'book-card-sub'},book.author)
+    book.status==='reading'?h('p',{style:{fontSize:11,color:'var(--primary)',fontWeight:700}},pct+'% 읽음'):
+    h('p',{style:{fontSize:11,color:'var(--muted)'}},book.author)
   );
 }
 
@@ -522,87 +720,127 @@ function BookRow({book,onOpen}){
   const pct=book.pages>0?Math.round(book.page/book.pages*100):0;
   return h('div',{className:'book-row',onClick:()=>onOpen(book)},
     h(CoverArt,{book,width:46,height:64,style:{borderRadius:6}}),
-    h('div',{className:'book-row-info'},
-      h('p',{className:'book-row-title'},book.title),
-      h('p',{className:'book-row-meta'},book.author+' · '+book.category),
+    h('div',{style:{flex:1,minWidth:0}},
+      h('p',{style:{fontWeight:700,fontSize:14,marginBottom:2,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},book.title),
+      h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:5}},book.author+' · '+book.category),
       book.status==='done'?h(Stars,{rating:book.rating,size:12}):
-      book.status==='reading'?h('div',{className:'progress-mini'},
-        h('div',{className:'progress-mini-bar'},h('div',{className:'progress-mini-fill',style:{width:pct+'%'}})),
-        h('span',{className:'progress-mini-pct'},pct+'%')
+      book.status==='reading'?h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+        h('div',{style:{flex:1,height:4,background:'var(--track)',borderRadius:2}},h('div',{style:{height:'100%',width:pct+'%',background:'var(--primary)',borderRadius:2}})),
+        h('span',{style:{fontSize:11,color:'var(--primary)',fontWeight:700,flexShrink:0}},pct+'%')
       ):null
     ),
     h(Icon,{name:'chevR',size:16,style:{color:'var(--faint)',flexShrink:0}})
   );
 }
 
-/* ── 통계 화면 ── */
-function StatsScreen(){
-  const{byMonth,byCategory,streak,bestStreak,readingDays,finishedCount,pagesThisYear,avgRating,minutesThisYear}=STATS;
-  const maxM=Math.max(...byMonth.map(m=>m.n),1);
+function LibraryScreen({books,onOpen}){
+  const[filter,setFilter]=useState('done');
+  const[view,setView]=useState('grid');
+  const[readIdx,setReadIdx]=useState(0);
+  const filtered=books.filter(b=>b.status===filter);
+  const counts=Object.fromEntries(STATUS_LIST.map(f=>[f.k,books.filter(b=>b.status===f.k).length]));
+  const labelMap={wish:'위시',reading:'독서중',done:'완독',dropped:'하차'};
   return h('div',{className:'page-inner'},
-    h('div',{className:'page-head'},h('h1',null,'통계'),h('p',null,'2026년 나의 독서 데이터')),
+    h(HeroBanner,{books,readIdx,setReadIdx,onOpen}),
+    h(StatStrip,{books}),
+    h('div',null,
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,gap:10,flexWrap:'wrap'}},
+        h('div',{style:{display:'flex',gap:8,flexWrap:'wrap'}},
+          STATUS_LIST.map(f=>h('button',{key:f.k,className:'chip'+(filter===f.k?' active':''),onClick:()=>setFilter(f.k)},
+            f.label,h('span',{className:'chip-cnt'},counts[f.k])
+          ))
+        ),
+        h('div',{style:{display:'flex',gap:4}},
+          ['grid','list'].map(v=>h('button',{key:v,className:'view-btn'+(view===v?' active':''),onClick:()=>setView(v)},h(Icon,{name:v,size:16})))
+        )
+      ),
+      h('div',{className:'shelf-header'},
+        h('h2',{style:{fontSize:18,fontWeight:800}},labelMap[filter]),
+        h('span',{style:{fontSize:13,color:'var(--muted)'}},filtered.length+'권')
+      ),
+      filtered.length===0
+        ?h('div',{style:{textAlign:'center',padding:'48px 0',color:'var(--muted)',fontSize:14}},'이 목록에 책이 없습니다')
+        :view==='grid'
+          ?h('div',{className:'book-grid'},filtered.map(b=>h(BookCard,{key:b.id,book:b,onOpen})))
+          :h('div',null,filtered.map(b=>h(BookRow,{key:b.id,book:b,onOpen})))
+    )
+  );
+}
+
+/* ══════════════════════════════════
+   통계 화면
+══════════════════════════════════ */
+function StatsScreen({books}){
+  const done=books.filter(b=>b.status==='done');
+  const finishedCount=done.length;
+  const pagesYear=books.reduce((s,b)=>s+(b.status==='done'?b.pages:b.page)||0,0);
+  const avgRating=done.filter(b=>b.rating>0).length?
+    (done.filter(b=>b.rating>0).reduce((s,b)=>s+b.rating,0)/done.filter(b=>b.rating>0).length).toFixed(1):0;
+
+  // 월별 완독
+  const byMonth=[1,2,3,4,5,6].map(m=>({m:m+'월',n:done.filter(b=>b.finished&&parseInt(b.finished.split('-')[1])===m).length}));
+  const maxM=Math.max(...byMonth.map(x=>x.n),1);
+
+  // 카테고리
+  const catMap={};done.forEach(b=>{catMap[b.category]=(catMap[b.category]||0)+1;});
+  const byCategory=Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([name,count])=>({name,count}));
+  const maxCat=byCategory[0]?.count||1;
+
+  return h('div',{className:'page-inner'},
+    h('div',{className:'page-head'},h('h1',null,'통계'),h('p',null,'나의 독서 데이터')),
     h('div',{className:'stats-cards'},
-      [{icon:'book',val:finishedCount,unit:'권',label:'올해 완독'},{icon:'books',val:pagesThisYear.toLocaleString(),unit:'p',label:'읽은 페이지'},{icon:'clock',val:Math.round(minutesThisYear/60),unit:'시간',label:'독서 시간'},{icon:'heart',val:avgRating,unit:'',label:'평균 별점'}]
-      .map((item,i)=>h('div',{key:i,className:'stat-card'},
-        h('div',{className:'stat-card-icon'},h(Icon,{name:item.icon,size:18})),
-        h('div',{className:'stat-card-val'},String(item.val),h('span',{className:'stat-card-unit'},item.unit)),
-        h('p',{className:'stat-card-label'},item.label)
+      [{icon:'book',val:finishedCount,unit:'권',label:'완독'},{icon:'books',val:pagesYear.toLocaleString(),unit:'p',label:'읽은 페이지'},{icon:'clock',val:52,unit:'시간',label:'독서 시간'},{icon:'heart',val:avgRating,unit:'',label:'평균 별점'}]
+      .map((item,i)=>h('div',{key:i,className:'card'},
+        h('div',{style:{width:36,height:36,borderRadius:10,background:'var(--primary-tint)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--primary)',marginBottom:12}},h(Icon,{name:item.icon,size:18})),
+        h('div',{style:{fontSize:28,fontWeight:800,lineHeight:1}},String(item.val),h('span',{style:{fontSize:14,color:'var(--muted)',fontWeight:600,marginLeft:3}},item.unit)),
+        h('p',{style:{fontSize:12,color:'var(--muted)',fontWeight:600,marginTop:5}},item.label)
       ))
     ),
     h('div',{className:'stats-2col'},
-      h('div',{className:'stat-card'},
+      h('div',{className:'card'},
         h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:4}},'월별 완독'),
-        h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:20}},'올해 매달 끝낸 책'),
-        h('div',{style:{display:'flex',alignItems:'flex-end',gap:8,height:160}},
+        h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:20}},'매달 완독한 책'),
+        h('div',{style:{display:'flex',alignItems:'flex-end',gap:8,height:140}},
           byMonth.map((m,i)=>h('div',{key:i,style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:5}},
             h('span',{style:{fontSize:12,fontWeight:700,color:m.n>0?'var(--text)':'transparent'}},String(m.n||'')),
-            h('div',{style:{width:'100%',borderRadius:'4px 4px 0 0',background:m.n>0?'var(--primary)':'var(--track)',height:Math.max(m.n/maxM*120,8)+'px',transition:'height 0.6s'}}),
+            h('div',{style:{width:'100%',borderRadius:'4px 4px 0 0',background:m.n>0?'var(--primary)':'var(--track)',height:Math.max(m.n/maxM*110,8)+'px',transition:'height .6s'}}),
             h('span',{style:{fontSize:11,color:'var(--muted)',marginTop:5}},m.m)
           ))
         )
       ),
-      h('div',{className:'stat-card'},
+      h('div',{className:'card'},
         h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:4}},'카테고리'),
-        h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:20}},'장르별 완독 비중'),
-        h('div',{style:{display:'flex',flexDirection:'column',gap:14}},
-          byCategory.map((c,i)=>h('div',{key:i,style:{display:'flex',alignItems:'center',gap:10}},
-            h('span',{style:{fontSize:13,fontWeight:600,width:44,flexShrink:0}},c.name),
-            h('div',{style:{flex:1,height:8,background:'var(--track)',borderRadius:4}},
-              h('div',{style:{height:'100%',width:(c.count/Math.max(byCategory[0].count,1)*100)+'%',background:'var(--primary)',borderRadius:4,transition:'width 0.6s'}})
-            ),
-            h('span',{style:{fontSize:13,fontWeight:700,color:'var(--muted)',width:18,textAlign:'right'}},String(c.count))
-          ))
-        )
-      )
-    ),
-    h('div',{className:'stat-card',style:{display:'flex',gap:20,alignItems:'center'}},
-      h('div',{style:{position:'relative',width:80,height:80,flexShrink:0}},
-        h(Ring,{value:streak,max:30,size:80,stroke:9,warn:true}),
-        h('div',{style:{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center'}},
-          h('span',{style:{fontSize:22,fontWeight:800}},String(streak))
-        )
-      ),
-      h('div',null,
-        h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:6}},streak+'일 연속 독서 중이에요'),
-        h('p',{style:{fontSize:13,color:'var(--muted)'}},['최고 기록 ',h('strong',null,String(bestStreak)),'일 · 올해 ',h('strong',null,String(readingDays)),'일 읽음'])
+        h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:20}},'장르별 완독'),
+        byCategory.length===0
+          ?h('p',{style:{color:'var(--muted)',fontSize:13,textAlign:'center',padding:'20px 0'}},'완독 기록이 없습니다')
+          :h('div',{style:{display:'flex',flexDirection:'column',gap:14}},
+            byCategory.map((c,i)=>h('div',{key:i,style:{display:'flex',alignItems:'center',gap:10}},
+              h('span',{style:{fontSize:13,fontWeight:600,width:60,flexShrink:0}},c.name),
+              h('div',{style:{flex:1,height:8,background:'var(--track)',borderRadius:4}},h('div',{style:{height:'100%',width:(c.count/maxCat*100)+'%',background:'var(--primary)',borderRadius:4,transition:'width .6s'}})),
+              h('span',{style:{fontSize:13,fontWeight:700,color:'var(--muted)',width:18,textAlign:'right'}},String(c.count))
+            ))
+          )
       )
     )
   );
 }
 
-/* ── 목표 화면 ── */
-function GoalScreen(){
-  const{target,done}=GOAL;
+/* ══════════════════════════════════
+   목표 화면
+══════════════════════════════════ */
+function GoalScreen({books}){
+  const target=30;
+  const done=books.filter(b=>b.status==='done').length;
   const today=new Date();
   const dayOfYear=Math.floor((today-new Date(today.getFullYear(),0,0))/86400000);
   const expected=Math.round(target*dayOfYear/365);
   const pace=done>=expected;
-  const doneBooks=BOOKS.filter(b=>b.status==='done');
+  const doneBooks=books.filter(b=>b.status==='done');
   const barPct=Math.min(done/target*100,100);
   const expPct=Math.min(expected/target*100,100);
   return h('div',{className:'page-inner'},
     h('div',{className:'page-head'},h('h1',null,'목표'),h('p',null,'2026년 독서 목표')),
-    h('div',{className:'goal-hero'},
+    h('div',{className:'goal-card'},
       h('div',{className:'goal-inner'},
         h('div',{style:{position:'relative',width:150,height:150,flexShrink:0}},
           h(Ring,{value:done,max:target,size:150,stroke:13}),
@@ -612,7 +850,7 @@ function GoalScreen(){
           )
         ),
         h('div',{style:{flex:1,minWidth:200}},
-          h('div',{style:{background:pace?'rgba(47,158,99,0.1)':'rgba(207,138,44,0.1)',borderRadius:10,padding:'8px 14px',display:'inline-flex',alignItems:'center',gap:6,marginBottom:18}},
+          h('div',{style:{background:pace?'rgba(47,158,99,.1)':'rgba(207,138,44,.1)',borderRadius:10,padding:'8px 14px',display:'inline-flex',alignItems:'center',gap:6,marginBottom:18}},
             h(Icon,{name:'arrowUp',size:14,style:{color:pace?'var(--ok)':'var(--warn)',transform:pace?'none':'rotate(180deg)'}}),
             h('span',{style:{fontSize:13,fontWeight:700,color:pace?'var(--ok)':'var(--warn)'}},pace?'페이스보다 앞서있어요':'페이스보다 조금 뒤예요')
           ),
@@ -627,7 +865,7 @@ function GoalScreen(){
       ),
       h('div',{style:{marginTop:28}},
         h('div',{style:{position:'relative',height:10,background:'var(--track)',borderRadius:5}},
-          h('div',{style:{position:'absolute',left:0,top:0,height:'100%',width:barPct+'%',background:'var(--primary)',borderRadius:5,transition:'width 0.7s'}}),
+          h('div',{style:{position:'absolute',left:0,top:0,height:'100%',width:barPct+'%',background:'var(--primary)',borderRadius:5,transition:'width .7s'}}),
           h('div',{style:{position:'absolute',top:-4,bottom:-4,left:expPct+'%',width:2,background:'var(--muted)',borderRadius:1,transform:'translateX(-1px)'}})
         ),
         h('div',{style:{display:'flex',justifyContent:'space-between',marginTop:8,fontSize:12,color:'var(--muted)'}},
@@ -635,53 +873,53 @@ function GoalScreen(){
         )
       )
     ),
-    h('div',{className:'stat-card'},
+    h('div',{className:'card'},
       h('h3',{style:{fontWeight:800,fontSize:16,marginBottom:4}},'올해 읽은 책'),
       h('p',{style:{fontSize:12,color:'var(--muted)',marginBottom:16}},done+'권 완독'),
-      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(68px,1fr))',gap:10}},
-        [...doneBooks,null].map((b,i)=>b
-          ?h('div',{key:b.id,style:{cursor:'pointer'}},h(CoverArt,{book:b,width:'100%',height:undefined,style:{aspectRatio:'5/7',width:'100%',height:'auto'}}))
-          :h('div',{key:'plus',style:{aspectRatio:'5/7',borderRadius:8,border:'2px dashed var(--border)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--faint)',cursor:'pointer'}},h(Icon,{name:'plus',size:20}))
-        )
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(64px,1fr))',gap:10}},
+        [...doneBooks].map((b)=>h('div',{key:b.id},h(CoverArt,{book:b,width:'100%',height:undefined,style:{aspectRatio:'5/7',width:'100%',height:'auto'}}))),
+        h('div',{key:'plus',style:{aspectRatio:'5/7',borderRadius:8,border:'2px dashed var(--border)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--faint)',cursor:'pointer'}},h(Icon,{name:'plus',size:20}))
       )
     )
   );
 }
 
-/* ── 캘린더 화면 ── */
+/* ══════════════════════════════════
+   캘린더 화면
+══════════════════════════════════ */
 function CalendarScreen(){
   const[year,setYear]=useState(2026);
   const[month,setMonth]=useState(5);
-  const{streak,bestStreak}=STATS;
+  const rl=lsGet('bt.readingLog',READING_LOG_SEED);
   const daysInMonth=new Date(year,month,0).getDate();
   const firstDay=new Date(year,month-1,1).getDay();
   const today=new Date();
   const isToday=d=>today.getFullYear()===year&&today.getMonth()===month-1&&today.getDate()===d;
-  const getMin=d=>{const k=`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return READING_LOG[k]||0;};
-  const lv=m=>{if(m===0)return 0;if(m<30)return 1;if(m<50)return 2;if(m<70)return 3;return 4;};
-  const lvBg=['var(--surface-2)','rgba(59,91,219,0.15)','rgba(59,91,219,0.32)','rgba(59,91,219,0.56)','rgba(59,91,219,0.82)'];
-  const lvTxt=['var(--text)','var(--primary)','var(--primary)','#fff','#fff'];
+  const getMin=d=>{const k=`${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return rl[k]||0;};
+  const lv=m=>m===0?0:m<30?1:m<50?2:m<70?3:4;
+  const lvBg=['var(--surface-2)','rgba(59,91,219,.15)','rgba(59,91,219,.32)','rgba(59,91,219,.56)','rgba(59,91,219,.82)'];
+  const lvTx=['var(--text)','var(--primary)','var(--primary)','#fff','#fff'];
   const cells=[];
   for(let i=0;i<firstDay;i++)cells.push(null);
   for(let d=1;d<=daysInMonth;d++)cells.push(d);
   const mn=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-  const last7=[...Array(7)].map((_,i)=>{const d=new Date(2026,4,24+i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;return READING_LOG[k]||0;});
+  const last7=[...Array(7)].map((_,i)=>{const d=new Date(2026,4,24+i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;return rl[k]||0;});
   const maxL7=Math.max(...last7,1);
   return h('div',{className:'page-inner'},
     h('div',{className:'page-head'},h('h1',null,'캘린더'),h('p',null,'매일의 독서 흔적')),
     h('div',{className:'streak-banner'},
       h('div',{style:{display:'flex',alignItems:'center',gap:14}},
-        h('div',{style:{width:42,height:42,borderRadius:12,background:'rgba(207,138,44,0.2)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--warn)',flexShrink:0}},h(Icon,{name:'flame',size:22})),
+        h('div',{style:{width:42,height:42,borderRadius:12,background:'rgba(207,138,44,.2)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--warn)',flexShrink:0}},h(Icon,{name:'flame',size:22})),
         h('div',null,
-          h('p',{style:{fontWeight:800,fontSize:17,color:'oklch(0.4 0.12 58)'}},streak+'일 연속'),
-          h('p',{style:{fontSize:12,color:'oklch(0.5 0.1 58)'}},'최고 '+bestStreak+'일 · 오늘도 기록을 이어가요')
+          h('p',{style:{fontWeight:800,fontSize:17,color:'oklch(0.4 0.12 58)'}},'9일 연속'),
+          h('p',{style:{fontSize:12,color:'oklch(0.5 0.1 58)'}},'최고 23일 · 오늘도 기록을 이어가요')
         )
       ),
       h('div',{style:{display:'flex',gap:3,alignItems:'flex-end',height:32,flexShrink:0}},
-        last7.map((m,i)=>h('div',{key:i,style:{width:9,borderRadius:'2px 2px 0 0',background:m>0?'var(--warn)':'rgba(207,138,44,0.2)',height:Math.max(m/maxL7*32,4)+'px'}}))
+        last7.map((m,i)=>h('div',{key:i,style:{width:9,borderRadius:'2px 2px 0 0',background:m>0?'var(--warn)':'rgba(207,138,44,.2)',height:Math.max(m/maxL7*32,4)+'px'}}))
       )
     ),
-    h('div',{className:'stat-card'},
+    h('div',{className:'card'},
       h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}},
         h('button',{onClick:()=>{if(month===1){setMonth(12);setYear(y=>y-1);}else setMonth(m=>m-1);},style:{background:'none',border:'none',cursor:'pointer',color:'var(--muted)',padding:8}},h(Icon,{name:'chevL',size:18})),
         h('span',{style:{fontWeight:800,fontSize:16}},year+'년 '+mn[month-1]),
@@ -693,10 +931,10 @@ function CalendarScreen(){
       h('div',{className:'cal-grid'},
         cells.map((d,i)=>{
           if(!d)return h('div',{key:'e'+i,style:{aspectRatio:'1'}});
-          const m=getMin(d), l=lv(m);
+          const m=getMin(d),l=lv(m);
           return h('div',{key:d,className:'cal-cell'+(isToday(d)?' today':''),style:{background:lvBg[l]}},
-            h('span',{className:'cal-day',style:{color:lvTxt[l]}},String(d)),
-            m>0&&h('span',{className:'cal-min',style:{color:l>=3?'rgba(255,255,255,0.85)':'var(--primary)'}},m+'m')
+            h('span',{style:{fontSize:11,fontWeight:700,color:lvTx[l],lineHeight:1.2}},String(d)),
+            m>0&&h('span',{style:{fontSize:8,fontWeight:600,color:l>=3?'rgba(255,255,255,.85)':'var(--primary)',lineHeight:1.1}},m+'m')
           );
         })
       ),
@@ -709,69 +947,79 @@ function CalendarScreen(){
   );
 }
 
-/* ── 앱 셸 ── */
+/* ══════════════════════════════════
+   앱 루트
+══════════════════════════════════ */
 function App(){
-  const getSavedTab=()=>{try{return localStorage.getItem('bt.tab')||'library';}catch{return'library';}};
-  const[tab,setTab]=useState(getSavedTab);
-  const[theme,setTheme]=useState('light');
+  const[tab,setTab]=useState(()=>lsGet('bt.tab','library'));
+  const[theme,setTheme]=useState(()=>lsGet('bt.theme','light'));
+  const[books,setBooks]=useState(()=>lsGet('bt.books',SEED_BOOKS));
+  // modal 상태: null | {type:'edit',book} | {type:'add'}
   const[modal,setModal]=useState(null);
-  const[books,setBooks]=useState(BOOKS);
-  const changeTab=t=>{setTab(t);try{localStorage.setItem('bt.tab',t);}catch{}};
+
   useEffect(()=>{document.documentElement.setAttribute('data-theme',theme);},[theme]);
-  useEffect(()=>{
-    const fn=e=>{if(e.key==='Escape'&&modal)setModal(null);};
-    document.addEventListener('keydown',fn);
-    return()=>document.removeEventListener('keydown',fn);
-  },[modal]);
-  const handleUpdate=updated=>setBooks(prev=>prev.map(b=>b.id===updated.id?updated:b));
+  useEffect(()=>{lsSet('bt.books',books);},[books]);
+  useEffect(()=>{lsSet('bt.tab',tab);},[tab]);
+  useEffect(()=>{lsSet('bt.theme',theme);},[theme]);
+
+  function addBook(book){setBooks(prev=>[...prev,book]);}
+  function updateBook(updated){setBooks(prev=>prev.map(b=>b.id===updated.id?updated:b));}
+  function deleteBook(id){setBooks(prev=>prev.filter(b=>b.id!==id));}
+
+  // 책 카드 클릭 → 편집 모달
+  function openEdit(book){setModal({type:'edit',book});}
+
   const navItems=[{k:'library',icon:'books',label:'서재'},{k:'stats',icon:'chart',label:'통계'},{k:'goal',icon:'target',label:'목표'},{k:'calendar',icon:'calendar',label:'캘린더'}];
-  const screenMap={library:h(LibraryScreen,{books,onOpen:setModal}),stats:h(StatsScreen),goal:h(GoalScreen),calendar:h(CalendarScreen)};
+
+  const screenMap={
+    library:h(LibraryScreen,{books,onOpen:openEdit}),
+    stats:h(StatsScreen,{books}),
+    goal:h(GoalScreen,{books}),
+    calendar:h(CalendarScreen),
+  };
+
+  const toggleTheme=()=>setTheme(t=>t==='dark'?'light':'dark');
 
   return h('div',{className:'app-shell'},
-    /* ── 데스크탑 사이드바 ── */
+    // ── 사이드바 (데스크탑)
     h('aside',{className:'sidebar'},
       h('div',{className:'sidebar-logo'},
         h(Icon,{name:'bookmark',size:20,style:{color:'var(--primary)'}}),
-        h('span',{className:'sidebar-logo-text'},
-          'book',h('span',{className:'sidebar-logo-muted'},'tree')
-        )
+        h('span',{className:'sidebar-logo-text'},'book',h('span',{style:{color:'var(--muted)'}},'tree'))
       ),
       h('nav',{className:'sidebar-nav'},
-        navItems.map(item=>h('button',{key:item.k,className:'sidebar-nav-btn'+(tab===item.k?' active':''),onClick:()=>changeTab(item.k)},
-          h(Icon,{name:item.icon,size:18}),item.label
-        ))
+        navItems.map(item=>h('button',{key:item.k,className:'snb'+(tab===item.k?' active':''),onClick:()=>setTab(item.k)},h(Icon,{name:item.icon,size:18}),item.label))
       ),
       h('div',{className:'sidebar-footer'},
-        h('button',{className:'add-btn',onClick:()=>alert('책 추가 기능')},h(Icon,{name:'plus',size:16}),'책 추가'),
-        h('button',{className:'theme-btn',onClick:()=>setTheme(t=>t==='dark'?'light':'dark')},
-          h(Icon,{name:theme==='dark'?'sun':'moon',size:16}),theme==='dark'?'라이트 모드':'다크 모드'
-        )
+        h('button',{className:'add-btn',onClick:()=>setModal({type:'add'})},h(Icon,{name:'plus',size:16}),'책 추가'),
+        h('button',{className:'theme-btn',onClick:toggleTheme},h(Icon,{name:theme==='dark'?'sun':'moon',size:16}),theme==='dark'?'라이트 모드':'다크 모드')
       )
     ),
-    /* ── 모바일 + 콘텐츠 래퍼 ── */
+    // ── 모바일 + 콘텐츠
     h('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minWidth:0}},
-      /* 모바일 탑바 */
+      // 모바일 탑바
       h('header',{className:'topbar'},
-        h('button',{className:'topbar-icon-btn'},h(Icon,{name:'menu',size:20})),
         h('div',{className:'topbar-logo'},
           h(Icon,{name:'bookmark',size:18,style:{color:'var(--primary)'}}),
           'book',h('span',{style:{color:'var(--muted)'}},'tree')
         ),
         h('div',{className:'topbar-actions'},
-          h('button',{className:'topbar-icon-btn'},h(Icon,{name:'search',size:20})),
-          h('button',{className:'topbar-icon-btn',onClick:()=>setTheme(t=>t==='dark'?'light':'dark')},h(Icon,{name:theme==='dark'?'sun':'moon',size:20}))
+          h('button',{className:'topbar-icon-btn',onClick:()=>setModal({type:'add'})},h(Icon,{name:'plus',size:20})),
+          h('button',{className:'topbar-icon-btn',onClick:toggleTheme},h(Icon,{name:theme==='dark'?'sun':'moon',size:20}))
         )
       ),
-      /* 메인 콘텐츠 */
+      // 메인
       h('main',{className:'main-content'},screenMap[tab]||screenMap.library),
-      /* 모바일 하단 탭바 */
+      // 모바일 탭바
       h('nav',{className:'tabbar'},
-        navItems.map(item=>h('button',{key:item.k,className:'tabbar-btn'+(tab===item.k?' active':''),onClick:()=>changeTab(item.k)},
+        navItems.map(item=>h('button',{key:item.k,className:'tabb'+(tab===item.k?' active':''),onClick:()=>setTab(item.k)},
           h(Icon,{name:item.icon,size:22}),item.label
         ))
       )
     ),
-    modal&&h(BookModal,{book:modal,onClose:()=>setModal(null),onUpdate:handleUpdate})
+    // ── 모달
+    modal?.type==='add'&&h(AddBookModal,{onClose:()=>setModal(null),onAdd:addBook}),
+    modal?.type==='edit'&&h(EditBookModal,{book:modal.book,onClose:()=>setModal(null),onUpdate:updateBook,onDelete:deleteBook}),
   );
 }
 
