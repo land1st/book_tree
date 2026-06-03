@@ -232,12 +232,10 @@ const h=React.createElement;
 /* ══════════════════════════════════
    CONFIG
 ══════════════════════════════════ */
-// 알라딘 API 키를 여기에 입력하세요
-const ALADIN_TTB_KEY = 'YOUR_TTB_KEY_HERE';
-// CORS 프록시: GitHub Pages 배포 시 서버 프록시로 교체 필요
-// 예) const ALADIN_PROXY = 'https://your-api-server.com/api/aladin?query=';
-// 개발 테스트용 공용 프록시 (실제 배포 시 자체 서버 사용 권장)
-const ALADIN_PROXY = 'https://corsproxy.io/?url=';
+// 알라딘 API 키
+const ALADIN_TTB_KEY = 'ttbland1st1258001';
+// Cloudflare Workers 프록시 URL
+const ALADIN_PROXY = 'https://noisy-night-4410.alsdn88.workers.dev/?query=';
 
 /* ══════════════════════════════════
    초기 데이터
@@ -264,19 +262,17 @@ function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch
 
 /* ── 알라딘 API 검색 ── */
 async function searchAladin(query){
-  if(ALADIN_TTB_KEY==='YOUR_TTB_KEY_HERE'){
-    // API 키 없을 때 Mock 데이터 반환
-    return getMockResults(query);
-  }
-  const url=`http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=${ALADIN_TTB_KEY}&Query=${encodeURIComponent(query)}&QueryType=Keyword&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101`;
   try{
-    const res=await fetch(ALADIN_PROXY+encodeURIComponent(url));
-    const data=await res.json();
-    return (data.item||[]).map(item=>({
-      title:item.title,
-      author:item.author.replace(/\s*\(지은이\)/,'').trim(),
-      cover:item.cover,
-      publisher:item.publisher,
+    const res=await fetch(ALADIN_PROXY+encodeURIComponent(query));
+    const text=await res.text();
+    // 알라딘 API는 JSON이지만 앞뒤 공백/BOM 제거 필요
+    const data=JSON.parse(text.trim().replace(/^\uFEFF/,''));
+    if(!data.item||data.item.length===0)return getMockResults(query);
+    return data.item.map(item=>({
+      title:item.title.replace(/\s*-.*$/,'').trim(),
+      author:(item.author||'').replace(/\s*\(.*?\)/g,'').trim(),
+      cover:item.cover||null,
+      publisher:item.publisher||'',
       pages:0,
       isbn:item.isbn13||item.isbn||'',
       category:mapCategory(item.categoryName||''),
@@ -302,14 +298,37 @@ function mapCategory(cat){
 }
 
 function getMockResults(query){
-  const mock=[
-    {title:'채식주의자',author:'한강',cover:'https://image.aladin.co.kr/product/303/6/cover/k032636551_1.jpg',publisher:'창비',pages:247,isbn:'9788936434120',category:'소설',description:''},
-    {title:'소년이 온다',author:'한강',cover:'https://image.aladin.co.kr/product/4602/17/cover/8936434128_1.jpg',publisher:'창비',pages:216,isbn:'9788936434489',category:'소설',description:''},
-    {title:'82년생 김지영',author:'조남주',cover:'https://image.aladin.co.kr/product/13173/16/cover/k432533748_1.jpg',publisher:'민음사',pages:190,isbn:'9788937473135',category:'소설',description:''},
-    {title:'아몬드',author:'손원평',cover:'https://image.aladin.co.kr/product/15229/4/cover/8954651135_1.jpg',publisher:'창비',pages:264,isbn:'9788954651134',category:'소설',description:''},
-    {title:'달러구트 꿈 백화점',author:'이미예',cover:'https://image.aladin.co.kr/product/24695/75/cover/k392730743_1.jpg',publisher:'팩토리나인',pages:302,isbn:'9791165341909',category:'소설',description:''},
-  ].filter(b=>b.title.includes(query)||b.author.includes(query)||query.length<2);
-  return mock.length?mock:mock.slice(0,3);
+  // API 키 없을 때 보여줄 샘플 도서 목록
+  const ALL_MOCK=[
+    {title:'채식주의자',author:'한강',cover:'https://image.aladin.co.kr/product/303/6/cover/k032636551_1.jpg',publisher:'창비',pages:247,isbn:'9788936434120',category:'소설'},
+    {title:'소년이 온다',author:'한강',cover:'https://image.aladin.co.kr/product/4602/17/cover/8936434128_1.jpg',publisher:'창비',pages:216,isbn:'9788936434489',category:'소설'},
+    {title:'흰',author:'한강',cover:'https://image.aladin.co.kr/product/11589/54/cover/k782534154_1.jpg',publisher:'문학동네',pages:160,isbn:'9788954641319',category:'소설'},
+    {title:'82년생 김지영',author:'조남주',cover:'https://image.aladin.co.kr/product/13173/16/cover/k432533748_1.jpg',publisher:'민음사',pages:190,isbn:'9788937473135',category:'소설'},
+    {title:'아몬드',author:'손원평',cover:'https://image.aladin.co.kr/product/15229/4/cover/8954651135_1.jpg',publisher:'창비',pages:264,isbn:'9788954651134',category:'소설'},
+    {title:'달러구트 꿈 백화점',author:'이미예',cover:'https://image.aladin.co.kr/product/24695/75/cover/k392730743_1.jpg',publisher:'팩토리나인',pages:302,isbn:'9791165341909',category:'소설'},
+    {title:'불편한 편의점',author:'김호연',cover:'https://image.aladin.co.kr/product/27687/78/cover/k742731456_1.jpg',publisher:'나무옆의자',pages:284,isbn:'9791161572543',category:'소설'},
+    {title:'파친코',author:'이민진',cover:'https://image.aladin.co.kr/product/21743/74/cover/k522632655_1.jpg',publisher:'인플루엔셜',pages:768,isbn:'9788997235988',category:'소설'},
+    {title:'지구 끝의 온실',author:'김초엽',cover:'https://image.aladin.co.kr/product/27068/28/cover/k232730285_1.jpg',publisher:'자이언트북스',pages:316,isbn:'9791191419016',category:'SF/판타지'},
+    {title:'우리가 빛의 속도로 갈 수 없다면',author:'김초엽',cover:'https://image.aladin.co.kr/product/19486/75/cover/k542631018_1.jpg',publisher:'허블',pages:272,isbn:'9791190885379',category:'SF/판타지'},
+    {title:'나는 나를 파괴할 권리가 있다',author:'김영하',cover:'https://image.aladin.co.kr/product/261/5/cover/8970122435_2.jpg',publisher:'문학동네',pages:176,isbn:'9788954600149',category:'소설'},
+    {title:'보건교사 안은영',author:'정세랑',cover:'https://image.aladin.co.kr/product/17930/62/cover/k892530011_1.jpg',publisher:'민음사',pages:308,isbn:'9788937473128',category:'소설'},
+    {title:'아버지의 해방일지',author:'정지아',cover:'https://image.aladin.co.kr/product/30169/6/cover/k062832525_1.jpg',publisher:'창비',pages:284,isbn:'9788936434847',category:'소설'},
+    {title:'트렌드 코리아 2026',author:'김난도',cover:'https://image.aladin.co.kr/product/35182/10/cover/k322935020_1.jpg',publisher:'미래의창',pages:468,isbn:'9788959895465',category:'경영/경제'},
+    {title:'미드나잇 라이브러리',author:'매트 헤이그',cover:'https://image.aladin.co.kr/product/25095/97/cover/k132731937_1.jpg',publisher:'인플루엔셜',pages:344,isbn:'9791191056136',category:'소설'},
+    {title:'어린 왕자',author:'생텍쥐페리',cover:'https://image.aladin.co.kr/product/5/78/cover/8937460130_2.jpg',publisher:'열린책들',pages:112,isbn:'9788937460135',category:'고전'},
+    {title:'데미안',author:'헤르만 헤세',cover:'https://image.aladin.co.kr/product/1310/12/cover/8937460491_2.jpg',publisher:'열린책들',pages:208,isbn:'9788937460494',category:'고전'},
+    {title:'코스모스',author:'칼 세이건',cover:'https://image.aladin.co.kr/product/718/68/cover/8983711574_1.jpg',publisher:'사이언스북스',pages:672,isbn:'9788983712974',category:'과학'},
+    {title:'총 균 쇠',author:'재레드 다이아몬드',cover:'https://image.aladin.co.kr/product/441/82/cover/8970128328_1.jpg',publisher:'문학사상',pages:784,isbn:'9788970128320',category:'역사'},
+    {title:'죽음의 수용소에서',author:'빅터 프랭클',cover:'https://image.aladin.co.kr/product/225/15/cover/8972975842_1.jpg',publisher:'청아출판사',pages:264,isbn:'9788972975847',category:'인문'},
+  ];
+  const q=query.trim().toLowerCase();
+  // 제목 또는 저자에 쿼리가 포함되면 필터, 아니면 전체 반환 (API 키 없을 때 UX)
+  const filtered=ALL_MOCK.filter(b=>
+    b.title.toLowerCase().includes(q)||
+    b.author.toLowerCase().includes(q)
+  );
+  // 매칭 결과가 있으면 반환, 없으면 전체 목록 반환 (직접입력 유도용)
+  return filtered.length>0?filtered:ALL_MOCK;
 }
 
 /* ══════════════════════════════════
@@ -463,8 +482,6 @@ function AddBookModal({onClose,onAdd}){
 
   function upd(k,v){setForm(f=>({...f,[k]:v}));}
 
-  const hasKey=ALADIN_TTB_KEY!=='YOUR_TTB_KEY_HERE';
-
   return h(ModalScrim,{onClose},
     h('div',{className:'sheet',style:{maxWidth:560}},
       // ── 헤더
@@ -479,10 +496,6 @@ function AddBookModal({onClose,onAdd}){
       ),
       h('div',{className:'sheet-body',style:{paddingTop:16}},
         step==='search'?[
-          !hasKey&&h('div',{key:'banner',className:'api-key-banner'},
-            h(Icon,{name:'info',size:14,style:{flexShrink:0,marginTop:1}}),
-            h('span',null,'알라딘 API 키가 설정되지 않아 Mock 데이터로 표시됩니다. ALADIN_TTB_KEY 값을 설정하면 실제 도서 데이터를 검색할 수 있습니다.')
-          ),
           h('div',{key:'si',className:'search-input-wrap'},
             h('input',{ref:inputRef,className:'field-input',placeholder:'책 제목 또는 저자 검색...',value:query,onChange:e=>setQuery(e.target.value),onKeyDown:handleKey}),
             h('button',{className:'search-btn',onClick:doSearch},h(Icon,{name:'search',size:15}),'검색')
@@ -501,7 +514,10 @@ function AddBookModal({onClose,onAdd}){
               h(Icon,{name:'chevR',size:16,style:{color:'var(--faint)',flexShrink:0}})
             ))
           ),
-          !loading&&results.length===0&&query&&h('div',{key:'em',className:'search-empty'},'검색 결과가 없습니다.\n제목이나 저자명을 다시 확인해보세요.'),
+          !loading&&results.length===0&&query&&h('div',{key:'em',className:'search-empty'},
+            h('p',null,'검색 결과가 없습니다.'),
+            h('p',{style:{marginTop:6,fontSize:12}},'아래 \'직접 입력하기\'로 추가할 수 있어요.')
+          ),
           h('div',{key:'div',className:'divider'}),
           h('p',{key:'hint',style:{fontSize:12,color:'var(--muted)',textAlign:'center'}},'검색 결과가 없으면 직접 입력할 수도 있어요'),
           h('button',{key:'manual',className:'btn-ghost',onClick:()=>{setForm({title:query,author:'',pages:'',category:'소설',status:'wish',started:'',cover:null,isbn:''});setStep('confirm');}},
